@@ -438,6 +438,175 @@ public class lexico {
                 case 39:
                     estado=-1;
                     return new tokenlist(token, tokens.DEL_TAB);
+                    
+                case 40:
+                    if(cs == '.')
+                    {
+                        token+=cs;
+                        estado=41;
+                        cs=nextSymbol();
+                    }
+                    else
+                    {
+                        estado=44;
+                    }
+                    break;
+                    
+                case 41:
+                    if(cs=='.')
+                    {
+                        token+=cs;
+                        estado=42;
+                        cs=nextSymbol();
+                    }
+                    else
+                    {
+                        token+=" token no reconocido";
+                        estado=-1;
+                        return new tokenlist(token, tokens.ERROR);
+                    }
+                    break;
+                    
+                case 42:
+                    if(cs=='.')
+                    {
+                        token+=cs;
+                        estado=43;
+                        cs=nextSymbol();
+                    }
+                    else
+                    {
+                        token+=" token no reconocido";
+                        estado=-1;
+                        return new tokenlist(token, tokens.ERROR);
+                    }
+                    break;   
+                    
+                case 43:
+                    estado=-1;
+                    return new tokenlist(token, tokens.SIGN_RANG);
+                    
+                case 44:
+                    if(cs=='a')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=45;
+                    }
+                    else
+                    {
+                        estado=48;
+                    }
+                    break;
+                    
+                case 45:
+                    if(cs=='n')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=46;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 46:
+                    if(cs=='d')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=47;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 47:
+                    estado=-1;
+                    return new tokenlist(token, tokens.OP_AND);
+                    
+                case 48:
+                    if(cs=='o')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=49;
+                    }
+                    else
+                    {
+                        estado=51;
+                    }
+                    break;
+                    
+                case 49:
+                    if(cs=='r')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=50;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 50:
+                    estado=-1;
+                    return new tokenlist(token, tokens.OP_OR);
+                    
+                case 51:
+                    if(cs=='n')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=52;
+                    }
+                    else
+                    {
+                        estado=55;
+                    }
+                    break;
+                    
+                case 52:
+                    if(cs=='o')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=53;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 53:
+                    if(cs=='t')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=54;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 54:
+                    estado=-1;
+                    return new tokenlist(token, tokens.OP_NOT);
+                  
+                    //Btrue
+                //case 55:
+                    
+                    
+                            
             }
         }
     }
