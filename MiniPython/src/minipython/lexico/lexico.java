@@ -17,7 +17,7 @@ public class lexico {
     private long size;
     private File file;
     private int estado;
-    public static char cs;
+    public  char cs;
     private RandomAccessFile accessFile;
     private int totalEnters;
     private int totalTabs;
@@ -67,7 +67,7 @@ public class lexico {
     
     public tokenlist nextToken() throws IOException
     {
-        String token="";
+         String token="";
         while(true)
         {
             switch(estado)
@@ -508,7 +508,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -521,7 +521,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -551,7 +551,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -581,7 +581,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -594,7 +594,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -625,7 +625,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -638,7 +638,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -651,7 +651,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -694,7 +694,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -707,7 +707,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -720,7 +720,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -737,7 +737,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=72;
                     }
                     break;
                             
@@ -750,7 +750,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -763,7 +763,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -776,7 +776,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -789,7 +789,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -831,7 +831,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -869,7 +869,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -882,7 +882,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -912,7 +912,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -925,7 +925,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -938,7 +938,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -951,7 +951,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -968,7 +968,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -981,7 +981,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1011,7 +1011,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1030,7 +1030,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1043,7 +1043,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1056,7 +1056,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1069,7 +1069,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1099,7 +1099,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1112,7 +1112,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1125,7 +1125,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1138,7 +1138,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1168,7 +1168,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1187,7 +1187,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1200,7 +1200,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1217,7 +1217,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1291,7 +1291,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=120;
+                        estado=121;
                     }
                     break;
                           
@@ -1308,7 +1308,7 @@ public class lexico {
                     }
                     else
                     {
-                        estado=111;
+                        estado=112;
                     }
                     break;
                     
@@ -1321,6 +1321,22 @@ public class lexico {
                     token+=cs;
                     return new tokenlist(token, tokens.ERROR);
                     
+                case 121:
+                    if(cs==',')
+                    {
+                        estado=122;
+                        token+=cs;
+                        cs=nextSymbol();
+                    }
+                    else
+                    {
+                        estado=120;
+                    }
+                    break;
+                    
+                case 122:
+                    estado=-1;
+                    return new tokenlist(token, tokens.SIGN_C);
                 default:
                     estado=-1;
                     token+=cs;
