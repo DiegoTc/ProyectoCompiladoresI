@@ -603,10 +603,728 @@ public class lexico {
                     return new tokenlist(token, tokens.OP_NOT);
                   
                     //Btrue
-                //case 55:
+                case 55:
+                    if(cs=='t')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=56;
+                    }
+                    else
+                    {
+                        estado=60;
+                    }
+                    break;
                     
+                case 56:
+                    if(cs=='r')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=57;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
                     
+                case 57:
+                    if(cs=='u')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=58;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 58:
+                    if(cs=='e')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=59;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 59:
+                    estado=-1;
+                    return new tokenlist(token, tokens.B_TRUE);
+                    
+                case 60:
+                    if(cs=='f')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=61;
+                    }
+                    else
+                    {
+                        estado=66;
+                    }
+                    break;
+                    
+                case 61:
+                    if(cs=='a')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=62;
+                    }
+                    else
+                    {
+                        estado=88;
+                    }
+                    break;
+                    
+                case 62:
+                    if(cs=='l')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=63;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 63:
+                    if(cs=='s')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=64;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 64:
+                    if(cs=='e')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=65;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 65:
+                    estado=-1;
+                    return new tokenlist(token, tokens.B_FALSE);
+                    
+                case 66:
+                    if(cs=='c')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=67;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
                             
+                case 67:
+                    if(cs=='l')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=68;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 68:
+                    if(cs=='a')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=69;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 69:
+                    if(cs=='s')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=70;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 70:
+                    if(cs=='s')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=71;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 71:
+                    estado=-1;
+                    return new tokenlist(token, tokens.KW_CLASS);
+                    
+                case 72:
+                    if(cs=='i')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=73;
+                    }
+                    else
+                    {
+                        estado=77;
+                    }
+                    break;
+                    
+                case 73:
+                    if(cs=='=')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=74;
+                    }
+                    else if(cs=='f')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=75;
+                    }
+                    else if(cs=='n')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=76;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 74:
+                   estado=-1;
+                   return new tokenlist(token, tokens.OP_DIST);
+                   
+                case 75:
+                    estado=-1;
+                    return new tokenlist(token, tokens.KW_IF);
+                    
+                case 76:
+                    estado=-1;
+                    return new tokenlist(token, tokens.KW_IN);
+                    
+                case 77:
+                    if(cs=='d')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=78;
+                    }
+                    else
+                    {
+                        estado=81;
+                    }
+                    break;
+                    
+                case 78:
+                    if(cs=='e')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=79;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 79:
+                    if(cs=='f')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=80;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 80:
+                    estado=-1;
+                    return new tokenlist(token, tokens.KW_DEF);
+                    
+                case 81:
+                    if(cs=='w')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=82;
+                    }
+                    else
+                    {
+                        estado=91;
+                    }
+                    break;
+                    
+                case 82:
+                    if(cs=='h')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=83;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 83:
+                    if(cs=='i')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=84;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 84:
+                    if(cs=='l')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=85;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 85:
+                    if(cs=='e')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=86;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 86:
+                    estado=-1;
+                    return new tokenlist(token, tokens.KW_WHILE);
+                    
+                case 88:
+                    if(cs=='o')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=89;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 89:
+                    if(cs=='r')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=90;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 90:
+                    estado=-1;
+                    return new tokenlist(token, tokens.KW_FOR);
+                    
+                case 91:
+                    if(cs=='r')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=92;
+                    }
+                    else
+                    {
+                        estado=98;
+                    }
+                    break;
+                    
+                case 92:
+                    if(cs=='e')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=93;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 93:
+                    if(cs=='t')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=94;
+                    }
+                    else if(cs=='a')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=118;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 94:
+                    if(cs=='u')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=95;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 95:
+                    if(cs=='r')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=96;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 96:
+                    if(cs=='n')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=97;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 97:
+                    estado=-1;
+                    return new tokenlist(token, tokens.KW_RETURN);
+                    
+                case 98:
+                    if(cs=='b')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=99;
+                    }
+                    else
+                    {
+                        estado=104;
+                    }
+                    break;
+                    
+                case 99:
+                    if(cs=='r')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=100;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 100:
+                    if(cs=='e')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=101;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 101:
+                    if(cs=='a')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=102;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 102:
+                    if(cs=='k')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=103;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 103:
+                    estado=-1;
+                    return new tokenlist(token, tokens.KW_BREAK);
+                    
+                case 104:
+                    if(cs=='e')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=105;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 105:
+                    if(cs=='l')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=106;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 106:
+                    if(cs=='s')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=107;
+                    }
+                    else if(cs=='i')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=109;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 107:
+                    if(cs=='e')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=108;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 108:
+                    estado=-1;
+                    return new tokenlist(token, tokens.KW_ELSE);
+                    
+                case 109:
+                    if(cs=='f')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=110;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 110:
+                    estado=-1;
+                    return new tokenlist(token, tokens.KW_ELIF);
+                    
+                case 111:
+                    if(Character.isLetter(cs))
+                    {
+                        estado=112;
+                        token+=cs;
+                        cs=nextSymbol();
+                    }
+                    else
+                    {
+                        estado=114;
+                    }
+                    break;
+                    
+                case 112:
+                    if(Character.isLetter(cs)||cs=='_')
+                    {
+                        estado=112;
+                        token+=cs;
+                        cs=nextSymbol();
+                    }
+                    else
+                    {
+                        estado=113;
+                    }
+                    break;
+                    
+                case 113:
+                    estado=-1;
+                    return new tokenlist(token, tokens.P_ID);
+                    
+                case 114:
+                    if(Character.isDigit(cs))
+                    {
+                        token+=cs;
+                        estado=115;
+                        cs=nextSymbol();
+                    }
+                    else
+                    {
+                        estado=116;
+                    }
+                    break;
+                    
+                case 115:
+                    if(Character.isDigit(cs))
+                    {
+                        token+=cs;
+                        estado=115;
+                        cs=nextSymbol();
+                    }
+                    else
+                    {
+                        estado=-1;
+                        return new tokenlist(token, tokens.LIT_NUM);
+                    }
+                    break;
+                    
+                case 116:
+                    if(Character.isLetter(cs))
+                    {
+                        token+=cs;
+                        estado=117;
+                        cs=nextSymbol();
+                    }
+                    else
+                    {
+                        estado=120;
+                    }
+                    break;
+                          
+                case 117:
+                    estado=-1;
+                    return new tokenlist(token, tokens.LIT_CHCONST);
+                    
+                case 118:
+                    if(cs=='d')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=119;
+                    }
+                    else
+                    {
+                        estado=111;
+                    }
+                    break;
+                    
+                case 119:
+                   estado=-1;
+                   return new tokenlist(token, tokens.KW_READ);
+                   
+                case 120:
+                    estado=-1;
+                    token+=cs;
+                    return new tokenlist(token, tokens.ERROR);
+                    
+                default:
+                    estado=-1;
+                    token+=cs;
+                    return new tokenlist(token, tokens.ERROR);
             }
         }
     }
