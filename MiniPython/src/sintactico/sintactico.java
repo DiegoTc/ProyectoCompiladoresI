@@ -68,7 +68,7 @@ public class sintactico {
         }
     }
     
-    public void field_decl()
+    public void field_decl() throws IOException
     {
         if(currentToken==tokens.P_ID)
         {
@@ -273,6 +273,237 @@ public class sintactico {
             lvalue();
         }
     }
+    public void lvalue() throws IOException
+    {
+        if(currentToken==tokens.P_ID)
+        {
+            currentToken=nextToken();
+            lvalues();
+        }
+    }    
     
+    public void lvalues() throws IOException
+    {
+        if(currentToken==tokens.SIGN_CORI)
+        {
+            currentToken=nextToken();
+            expr();
+            if(currentToken ==tokens.SIGN_CORD) {
+                currentToken=nextToken();
+            }
+        }
+    }
     
+    public void expr() throws IOException
+    {
+        if(currentToken==tokens.P_ID)
+        {
+            currentToken=nextToken();
+            expresiones();
+        }
+        else if(currentToken==tokens.KW_PRINT||currentToken==tokens.KW_READ)
+        {
+            currentToken=nextToken();
+            method_call();
+        }
+        else if(currentToken==tokens.LIT_NUM)
+        {
+            constant();
+        }
+        else if(currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
+                currentToken==tokens.OP_DIV||currentToken==tokens.OP_MAIG||currentToken==tokens.OP_MAYOR||
+                currentToken==tokens.OP_MEIG||currentToken==tokens.OP_MENOR||currentToken==tokens.OP_MOD||
+                currentToken==tokens.OP_MULT||currentToken==tokens.OP_NOT||currentToken==tokens.OP_NUM||
+                currentToken==tokens.OP_OR||currentToken==tokens.OP_REST||currentToken==tokens.OP_SLEFT||
+                currentToken==tokens.OP_SRIGHT||currentToken==tokens.OP_SUMA)
+        {
+            currentToken=nextToken();
+            expr();
+        }
+        else if(currentToken==tokens.SIGN_NEG)
+        {
+            currentToken=nextToken();
+            expr();
+        }
+        else if(currentToken==tokens.SIGN_PARI)
+        {
+            currentToken=nextToken();
+            expr();
+            if(currentToken==tokens.SIGN_PARD)
+            {
+                currentToken=nextToken();
+            }
+        }
+        else if(currentToken==tokens.SIGN_CORI)
+        {
+            currentToken=nextToken();
+            expr();
+            while(currentToken==tokens.SIGN_C)
+            {
+                currentToken=nextToken();
+                expr();
+            }
+            if(currentToken==tokens.SIGN_CORD)
+            {
+                currentToken=nextToken();
+            }
+        }
+    }
+    
+    public void expresiones() throws IOException
+    {
+        if(currentToken==tokens.SIGN_CORI)
+        {
+            currentToken=nextToken();
+            expr();
+            if(currentToken ==tokens.SIGN_CORD) {
+                currentToken=nextToken();
+            }
+        }
+        else if(currentToken==tokens.SIGN_PARI)
+        {
+            currentToken=nextToken();
+            if(currentToken==tokens.SIGN_PARI)
+            {
+                currentToken=nextToken();
+                expr();
+                boolean flags=true;
+                while(flags)
+                {
+                    if(currentToken==tokens.SIGN_C)
+                    {
+                        currentToken=nextToken();
+                        expr();
+                    }
+                    else
+                    {
+                        flags=false;
+                    }
+                }
+                if(currentToken==tokens.SIGN_PARD)
+                {
+                    currentToken=nextToken();
+                }
+            }
+        }
+    }
+    
+    public void inicioBloque() throws IOException
+    {
+        if(currentToken==tokens.DEL_TAB)
+        {
+            currentToken=nextToken();
+        }
+    }
+    
+    public void finBloque() throws IOException
+    {
+        if(currentToken==tokens.NEW_LINE)
+        {
+            currentToken=nextToken();
+            if(currentToken==tokens.DEL_TAB)
+            {
+                currentToken=nextToken();
+                statement();
+                if(currentToken==tokens.DEL_DESTAB)
+                {
+                    currentToken=nextToken();
+                }
+            }
+        }
+    }
+    
+    public void range() throws IOException
+    {
+        if(currentToken==tokens.LIT_NUM)
+        {
+            currentToken=nextToken();
+            if(currentToken==tokens.SIGN_RANG)
+            {
+                currentToken=nextToken();
+                if(currentToken==tokens.LIT_NUM)
+                {
+                    currentToken=nextToken();
+                }
+            }
+        }
+    }
+    
+    public void op_bin() throws IOException
+    {
+        if(currentToken==tokens.OP_SUMA||currentToken==tokens.OP_REST||currentToken==tokens.OP_MULT||
+           currentToken==tokens.OP_DIV||currentToken==tokens.OP_SLEFT||currentToken==tokens.OP_SRIGHT||
+           currentToken==tokens.OP_MOD)
+        {
+            arith_op();
+        }
+        else if(currentToken==tokens.OP_MAYOR||currentToken==tokens.OP_MENOR||currentToken==tokens.OP_MAIG||
+                currentToken==tokens.OP_MEIG)
+        {
+            rel_op();
+        }
+        else if(currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST)
+        {
+            eq_op();
+        }
+        else if(currentToken==tokens.OP_AND||currentToken==tokens.OP_OR||currentToken==tokens.OP_NOT)
+        {
+            cond_op();
+        }
+    }
+    
+    public void arith_op() throws IOException
+    {
+        if(currentToken==tokens.OP_SUMA||currentToken==tokens.OP_REST||currentToken==tokens.OP_MULT||
+           currentToken==tokens.OP_DIV||currentToken==tokens.OP_SLEFT||currentToken==tokens.OP_SRIGHT||
+           currentToken==tokens.OP_MOD)
+        {
+            currentToken=nextToken();
+        }
+    }
+    
+    public void rel_op() throws IOException
+    {
+        if(currentToken==tokens.OP_MAYOR||currentToken==tokens.OP_MENOR||currentToken==tokens.OP_MAIG||
+           currentToken==tokens.OP_MEIG)
+        {
+            currentToken=nextToken();
+        }
+    }
+    
+    public void eq_op() throws IOException
+    {
+        if(currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST)
+        {
+            currentToken=nextToken();
+        }
+    }
+    
+    public void cond_op() throws IOException
+    {
+        if(currentToken==tokens.OP_AND||currentToken==tokens.OP_OR||currentToken==tokens.OP_NOT)
+        {
+            currentToken=nextToken();
+        }
+    }
+    
+    public void constant() throws IOException
+    {
+        if(currentToken==tokens.LIT_NUM||currentToken==tokens.LIT_CHCONST)
+        {
+            currentToken=nextToken();
+        }
+        else if(currentToken==tokens.B_TRUE||currentToken==tokens.B_FALSE)
+        {
+            bool_const();
+        }
+    }
+    
+    public void bool_const() throws IOException
+    {
+        if(currentToken==tokens.B_TRUE||currentToken==tokens.B_FALSE)
+        {
+            currentToken=nextToken();
+        }
+    }
 }

@@ -106,6 +106,7 @@ public class lexico {
                             {
                                 pila.push(contador);
                                 estado=-1;
+                                lasttoken="";
                                 return new tokenlist(token, tokens.DEL_TAB);
                             }
                             else
@@ -116,11 +117,13 @@ public class lexico {
                                 {
                                     if(pila.isEmpty())
                                     {
+                                        lasttoken="";
                                         return new tokenlist("EROR", tokens.ERROR);
                                     }
                                     pila.pop();
                                     top=getTopPila();
                                 }
+                                lasttoken="";
                                 return new tokenlist(token, tokens.DEL_DESTAB);
                             }
                         }
@@ -136,6 +139,7 @@ public class lexico {
                             {
                                 pila.push(contador);
                                 estado=-1;
+                                lasttoken="";
                                 return new tokenlist(token, tokens.DEL_TAB);
                             }
                             else
@@ -146,11 +150,13 @@ public class lexico {
                                 {
                                     if(pila.isEmpty())
                                     {
+                                        lasttoken="";
                                         return new tokenlist("EROR", tokens.ERROR);
                                     }
                                     pila.pop();
                                     top=getTopPila();
                                 }
+                                lasttoken="";
                                 return new tokenlist(token, tokens.DEL_DESTAB);
                             }
                         }
@@ -887,13 +893,7 @@ public class lexico {
                     break;
                     
                 case 73:
-                    if(cs=='=')
-                    {
-                        token+=cs;
-                        cs=nextSymbol();
-                        estado=74;
-                    }
-                    else if(cs=='f')
+                   if(cs=='f')
                     {
                         token+=cs;
                         cs=nextSymbol();
@@ -1406,13 +1406,39 @@ public class lexico {
                     }
                     else
                     {
-                        estado=120;
+                        estado=123;
                     }
                     break;
                     
                 case 122:
                     estado=-1;
                     return new tokenlist(token, tokens.SIGN_C);
+                    
+                case 123:
+                    if(cs=='!')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=124;
+                    }
+                    else
+                    {
+                        estado=120;
+                    }
+                    break;
+                    
+                case 124:
+                    if(cs=='=')
+                    {
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=74;
+                    }
+                    else {
+                        estado=120;
+                    }
+                    break;
+                    
                 default:
                     estado=-1;
                     token+=cs;
