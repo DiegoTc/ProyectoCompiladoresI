@@ -53,6 +53,8 @@ public class tokenlist {
         SIGN_PARI,
         SIGN_NEG,
         DEL_TAB,
+        DEL_DESTAB,
+        NEW_LINE,
         SIGN_ASSIG,
         SIGN_RANG,
         EOF,
@@ -130,6 +132,8 @@ public class tokenlist {
             case SIGN_PARI: return contenido;
             case SIGN_NEG: return contenido;
             case DEL_TAB: return contenido;
+            case DEL_DESTAB: return contenido;
+            case NEW_LINE: return contenido;
             case SIGN_ASSIG: return contenido;
             case SIGN_RANG: return contenido;
             case EOF: return contenido;

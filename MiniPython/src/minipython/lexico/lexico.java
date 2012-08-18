@@ -6,6 +6,7 @@ package minipython.lexico;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Stack;
 import minipython.lexico.tokenlist.tokens;
 /**
  *
@@ -21,7 +22,7 @@ public class lexico {
     private RandomAccessFile accessFile;
     private int totalEnters;
     private int totalTabs;
-
+    private Stack pila;
     public lexico(String path) 
     {
         this.path = path;
@@ -30,6 +31,8 @@ public class lexico {
         totalEnters=0;
         totalTabs=0;
         file=new File(path);
+        pila=new Stack();
+        pila.push(0);
         try
         {
             accessFile=new RandomAccessFile(file,"r");
@@ -41,6 +44,13 @@ public class lexico {
         }
     }
 
+    private int getTopPila()
+    {
+        Object a=pila.lastElement();
+        int num=Integer.parseInt(a.toString());
+        return num;
+    }
+    
     public int getTotalEnters() {
         return totalEnters;
     }
@@ -65,6 +75,7 @@ public class lexico {
         }
     }
     
+    private String lasttoken;
     public tokenlist nextToken() throws IOException
     {
          String token="";
@@ -78,6 +89,71 @@ public class lexico {
                         totalEnters++;
                         cs=nextSymbol();
                         estado=-1;
+                        lasttoken="\n";
+                        return new tokenlist(token, tokens.NEW_LINE);
+                    }
+                    if(lasttoken=="\n")
+                    {
+                        int contador=0;
+                        if(Character.isWhitespace(cs)||cs==' '){
+                            while(Character.isWhitespace(cs)||cs==' ')
+                            {
+                                cs=nextSymbol();
+                                contador++;
+                            }
+                            int top=getTopPila();
+                            if(contador>top)
+                            {
+                                pila.push(contador);
+                                estado=-1;
+                                return new tokenlist(token, tokens.DEL_TAB);
+                            }
+                            else
+                            {
+                                pila.pop();
+                                top=getTopPila();
+                                while(top!=contador)
+                                {
+                                    if(pila.isEmpty())
+                                    {
+                                        return new tokenlist("EROR", tokens.ERROR);
+                                    }
+                                    pila.pop();
+                                    top=getTopPila();
+                                }
+                                return new tokenlist(token, tokens.DEL_DESTAB);
+                            }
+                        }
+                        if(cs=='\t')
+                        {
+                            while(cs=='\t')
+                            {
+                                cs=nextSymbol();
+                                contador++;
+                            }
+                            int top=getTopPila();
+                            if(contador>=top)
+                            {
+                                pila.push(contador);
+                                estado=-1;
+                                return new tokenlist(token, tokens.DEL_TAB);
+                            }
+                            else
+                            {
+                                pila.pop();
+                                top=getTopPila();
+                                while(top!=contador)
+                                {
+                                    if(pila.isEmpty())
+                                    {
+                                        return new tokenlist("EROR", tokens.ERROR);
+                                    }
+                                    pila.pop();
+                                    top=getTopPila();
+                                }
+                                return new tokenlist(token, tokens.DEL_DESTAB);
+                            }
+                        }
                     }
                     if(cs==' '||Character.isWhitespace(cs)||Character.isSpaceChar(cs))
                     {
