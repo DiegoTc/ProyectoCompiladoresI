@@ -322,11 +322,35 @@ public class sintactico {
     
     public void expr() throws IOException
     {
-        while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
+        while(currentToken==tokens.NEW_LINE||currentToken==tokens.DEL_TAB)
         {
             currentToken=nextToken();
         }
-        if(currentToken==tokens.P_ID)
+        if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
+           currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
+           currentToken==tokens.SIGN_CORI||currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
+           currentToken==tokens.OP_DIV||currentToken==tokens.OP_MAIG||currentToken==tokens.OP_MAYOR||
+           currentToken==tokens.OP_MEIG||currentToken==tokens.OP_MENOR||currentToken==tokens.OP_MOD||
+           currentToken==tokens.OP_MULT||currentToken==tokens.OP_NOT||currentToken==tokens.OP_NUM||
+           currentToken==tokens.OP_OR||currentToken==tokens.OP_REST||currentToken==tokens.OP_SLEFT||
+           currentToken==tokens.OP_SRIGHT||currentToken==tokens.OP_SUMA)
+        {
+            exprTermino();
+            if(currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
+               currentToken==tokens.OP_DIV||currentToken==tokens.OP_MAIG||currentToken==tokens.OP_MAYOR||
+               currentToken==tokens.OP_MEIG||currentToken==tokens.OP_MENOR||currentToken==tokens.OP_MOD||
+               currentToken==tokens.OP_MULT||currentToken==tokens.OP_NOT||currentToken==tokens.OP_NUM||
+               currentToken==tokens.OP_OR||currentToken==tokens.OP_REST||currentToken==tokens.OP_SLEFT||
+               currentToken==tokens.OP_SRIGHT||currentToken==tokens.OP_SUMA)
+            {
+                Termino();
+            }
+        }
+    }
+    
+    public void exprTermino()throws IOException
+    {
+         if(currentToken==tokens.P_ID)
         {
             currentToken=nextToken();
             expresiones();
@@ -339,16 +363,6 @@ public class sintactico {
         else if(currentToken==tokens.LIT_NUM)
         {
             constant();
-        }
-        else if(currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
-                currentToken==tokens.OP_DIV||currentToken==tokens.OP_MAIG||currentToken==tokens.OP_MAYOR||
-                currentToken==tokens.OP_MEIG||currentToken==tokens.OP_MENOR||currentToken==tokens.OP_MOD||
-                currentToken==tokens.OP_MULT||currentToken==tokens.OP_NOT||currentToken==tokens.OP_NUM||
-                currentToken==tokens.OP_OR||currentToken==tokens.OP_REST||currentToken==tokens.OP_SLEFT||
-                currentToken==tokens.OP_SRIGHT||currentToken==tokens.OP_SUMA)
-        {
-            currentToken=nextToken();
-            expr();
         }
         else if(currentToken==tokens.SIGN_NEG)
         {
@@ -416,18 +430,23 @@ public class sintactico {
                   currentToken=nextToken();
               }
          }
-        /*else if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
-                currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
-                currentToken==tokens.SIGN_CORI||currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
-                currentToken==tokens.OP_DIV||currentToken==tokens.OP_MAIG||currentToken==tokens.OP_MAYOR||
-                currentToken==tokens.OP_MEIG||currentToken==tokens.OP_MENOR||currentToken==tokens.OP_MOD||
-                currentToken==tokens.OP_MULT||currentToken==tokens.OP_NOT||currentToken==tokens.OP_NUM||
-                currentToken==tokens.OP_OR||currentToken==tokens.OP_REST||currentToken==tokens.OP_SLEFT||
-                currentToken==tokens.OP_SRIGHT||currentToken==tokens.OP_SUMA)
-        {
-            expr();
-        }*/
     }
+    
+    public void Termino() throws IOException
+    {
+        if(currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
+           currentToken==tokens.OP_DIV||currentToken==tokens.OP_MAIG||currentToken==tokens.OP_MAYOR||
+           currentToken==tokens.OP_MEIG||currentToken==tokens.OP_MENOR||currentToken==tokens.OP_MOD||
+           currentToken==tokens.OP_MULT||currentToken==tokens.OP_NOT||currentToken==tokens.OP_NUM||
+           currentToken==tokens.OP_OR||currentToken==tokens.OP_REST||currentToken==tokens.OP_SLEFT||
+           currentToken==tokens.OP_SRIGHT||currentToken==tokens.OP_SUMA)
+        {
+            currentToken=nextToken();
+            exprTermino();
+            Termino();
+        }
+    }
+
     
     public void inicioBloque() throws IOException
     {
@@ -439,19 +458,14 @@ public class sintactico {
     
     public void finBloque() throws IOException
     {
-        //if(currentToken==tokens.NEW_LINE)
-        //{
-          //  currentToken=nextToken();
-            //if(currentToken==tokens.DEL_TAB)
-            //{
-              //  currentToken=nextToken();
-                //statement();
-                if(currentToken==tokens.DEL_DESTAB)
-                {
-                    currentToken=nextToken();
-                }
-            //}
-        //}
+        while(currentToken==tokens.NEW_LINE||currentToken==tokens.DEL_TAB)
+        {
+            currentToken=nextToken();
+        }
+        if(currentToken==tokens.DEL_DESTAB)
+        {
+            currentToken=nextToken();
+        }
     }
     
     public void range() throws IOException
