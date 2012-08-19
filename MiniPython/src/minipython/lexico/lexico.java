@@ -95,6 +95,46 @@ public class lexico {
                     if(lasttoken=="\n")
                     {
                         int contador=0;
+                        if(cs=='\t')
+                        {
+                            while(cs=='\t')
+                            {
+                                cs=nextSymbol();
+                                contador++;
+                            }
+                            int top=getTopPila();
+                            if(contador>top)
+                            {
+                                pila.push(contador);
+                                estado=-1;
+                                lasttoken="";
+                                return new tokenlist(token, tokens.DEL_TAB);
+                            }
+                            else if(contador==top)
+                            {
+                                estado=-1;
+                                lasttoken="";
+                                return new tokenlist(token, tokens.DEL_TAB);
+                            }
+                            else
+                            {
+                                pila.pop();
+                                top=getTopPila();
+                                while(top!=contador)
+                                {
+                                    if(pila.isEmpty())
+                                    {
+                                        lasttoken="";
+                                        return new tokenlist("EROR", tokens.ERROR);
+                                    }
+                                    pila.pop();
+                                    top=getTopPila();
+                                }
+                                lasttoken="";
+                                return new tokenlist(token, tokens.DEL_DESTAB);
+                            }
+                        }
+                        
                         if(Character.isWhitespace(cs)||cs==' '){
                             while(Character.isWhitespace(cs)||cs==' ')
                             {
@@ -109,35 +149,8 @@ public class lexico {
                                 lasttoken="";
                                 return new tokenlist(token, tokens.DEL_TAB);
                             }
-                            else
+                            else if(contador==top)
                             {
-                                pila.pop();
-                                top=getTopPila();
-                                while(top!=contador)
-                                {
-                                    if(pila.isEmpty())
-                                    {
-                                        lasttoken="";
-                                        return new tokenlist("EROR", tokens.ERROR);
-                                    }
-                                    pila.pop();
-                                    top=getTopPila();
-                                }
-                                lasttoken="";
-                                return new tokenlist(token, tokens.DEL_DESTAB);
-                            }
-                        }
-                        if(cs=='\t')
-                        {
-                            while(cs=='\t')
-                            {
-                                cs=nextSymbol();
-                                contador++;
-                            }
-                            int top=getTopPila();
-                            if(contador>=top)
-                            {
-                                pila.push(contador);
                                 estado=-1;
                                 lasttoken="";
                                 return new tokenlist(token, tokens.DEL_TAB);
@@ -160,6 +173,7 @@ public class lexico {
                                 return new tokenlist(token, tokens.DEL_DESTAB);
                             }
                         }
+                        
                     }
                     if(cs==' '||Character.isWhitespace(cs)||Character.isSpaceChar(cs))
                     {
@@ -1302,7 +1316,13 @@ public class lexico {
                     return new tokenlist(token, tokens.KW_ELIF);
                     
                 case 111:
-                    if(Character.isLetter(cs))
+                    if(cs=='p')
+                    {
+                        estado=125;
+                        token+=cs;
+                        cs=nextSymbol();
+                    }
+                    else if(Character.isLetter(cs))
                     {
                         estado=112;
                         token+=cs;
@@ -1439,6 +1459,41 @@ public class lexico {
                     }
                     break;
                     
+                case 125:
+                    if(cs=='r')
+                    {
+                        cs=nextSymbol();
+                        if(cs=='i')
+                        {
+                            cs=nextSymbol();
+                        }
+                        else{
+                            estado=112;
+                        }
+                        if(cs=='n')
+                        {
+                            cs=nextSymbol();
+                        }
+                        else
+                        {
+                            estado=112;
+                        }
+                        if(cs=='t')
+                        {
+                            cs=nextSymbol();
+                            estado=-1;
+                            return new tokenlist("print", tokens.KW_PRINT);
+                        }
+                        else
+                        {
+                            estado=112;
+                        }
+                    }
+                    else
+                    {
+                        estado=112;
+                    }
+                    break;
                 default:
                     estado=-1;
                     token+=cs;

@@ -55,7 +55,7 @@ public class sintactico {
                 if(currentToken==tokens.SIGN_DP)
                 {
                     currentToken=nextToken();
-                    while(currentToken==tokens.P_ID)
+                    while(currentToken==tokens.NEW_LINE)
                     {
                         field_decl();
                     }
@@ -70,9 +70,17 @@ public class sintactico {
     
     public void field_decl() throws IOException
     {
-        if(currentToken==tokens.P_ID)
+        if(currentToken==tokens.NEW_LINE)
         {
-            assign();
+            currentToken=nextToken();
+            if(currentToken==tokens.DEL_TAB)
+            {
+                currentToken=nextToken();
+                if(currentToken==tokens.P_ID)
+                {
+                    assign();
+                }
+            }
         }
     }
     
@@ -89,20 +97,26 @@ public class sintactico {
                     currentToken=nextToken();
                     if(currentToken==tokens.P_ID)
                     {
-                        while(currentToken==tokens.SIGN_C||currentToken==tokens.P_ID)
+                        currentToken=nextToken();
+                        while(currentToken==tokens.SIGN_C)
                         {
                             currentToken=nextToken();
+                            if(currentToken==tokens.P_ID)
+                            {
+                                currentToken=nextToken();
+                            }
                         }
                     }
                     if(currentToken==tokens.SIGN_PARD)
                     {
                         currentToken=nextToken();
                     }
-                    if(currentToken==tokens.SIGN_DP)
-                    {
-                        block();
-                    }
                 }
+                if(currentToken==tokens.SIGN_DP)
+                {
+                    currentToken=nextToken();
+                }
+                block();
             }
         }
     }
@@ -113,7 +127,7 @@ public class sintactico {
         {
             currentToken=nextToken();
             inicioBloque();
-            statement();
+            //statement();
             if(currentToken==tokens.P_ID||currentToken==tokens.KW_PRINT||currentToken==tokens.KW_IF||currentToken==tokens.KW_WHILE||
                currentToken==tokens.KW_FOR||currentToken==tokens.KW_RETURN||currentToken==tokens.KW_BREAK)
             {
@@ -122,6 +136,10 @@ public class sintactico {
                currentToken==tokens.KW_FOR||currentToken==tokens.KW_RETURN||currentToken==tokens.KW_BREAK)
                 {
                     statement();
+                    while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
+                    {
+                        currentToken=nextToken();
+                    }
                 }
             }
             finBloque();
@@ -130,6 +148,10 @@ public class sintactico {
     
     public void statement() throws IOException
     {
+        while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
+        {
+            currentToken=nextToken();
+        }
         if(currentToken==tokens.P_ID)
         {
             currentToken=nextToken();
@@ -142,6 +164,10 @@ public class sintactico {
             {
                 assign();
             }
+        }
+        else if(currentToken==tokens.KW_PRINT||currentToken==tokens.KW_READ)
+        {
+            method_call();
         }
         else if(currentToken==tokens.KW_IF)
         {
@@ -296,6 +322,10 @@ public class sintactico {
     
     public void expr() throws IOException
     {
+        while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
+        {
+            currentToken=nextToken();
+        }
         if(currentToken==tokens.P_ID)
         {
             currentToken=nextToken();
@@ -352,6 +382,10 @@ public class sintactico {
     
     public void expresiones() throws IOException
     {
+        while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
+        {
+            currentToken=nextToken();
+        }
         if(currentToken==tokens.SIGN_CORI)
         {
             currentToken=nextToken();
@@ -363,29 +397,36 @@ public class sintactico {
         else if(currentToken==tokens.SIGN_PARI)
         {
             currentToken=nextToken();
-            if(currentToken==tokens.SIGN_PARI)
+            expr();
+            boolean flags=true;
+            while(flags)
             {
-                currentToken=nextToken();
-                expr();
-                boolean flags=true;
-                while(flags)
-                {
-                    if(currentToken==tokens.SIGN_C)
-                    {
-                        currentToken=nextToken();
-                        expr();
-                    }
-                    else
-                    {
-                        flags=false;
-                    }
-                }
-                if(currentToken==tokens.SIGN_PARD)
+                if(currentToken==tokens.SIGN_C)
                 {
                     currentToken=nextToken();
+                    expr();
                 }
-            }
-        }
+                else
+                {
+                    flags=false;
+                 }
+              }
+              if(currentToken==tokens.SIGN_PARD)
+              {
+                  currentToken=nextToken();
+              }
+         }
+        /*else if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
+                currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
+                currentToken==tokens.SIGN_CORI||currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
+                currentToken==tokens.OP_DIV||currentToken==tokens.OP_MAIG||currentToken==tokens.OP_MAYOR||
+                currentToken==tokens.OP_MEIG||currentToken==tokens.OP_MENOR||currentToken==tokens.OP_MOD||
+                currentToken==tokens.OP_MULT||currentToken==tokens.OP_NOT||currentToken==tokens.OP_NUM||
+                currentToken==tokens.OP_OR||currentToken==tokens.OP_REST||currentToken==tokens.OP_SLEFT||
+                currentToken==tokens.OP_SRIGHT||currentToken==tokens.OP_SUMA)
+        {
+            expr();
+        }*/
     }
     
     public void inicioBloque() throws IOException
@@ -398,19 +439,19 @@ public class sintactico {
     
     public void finBloque() throws IOException
     {
-        if(currentToken==tokens.NEW_LINE)
-        {
-            currentToken=nextToken();
-            if(currentToken==tokens.DEL_TAB)
-            {
-                currentToken=nextToken();
-                statement();
+        //if(currentToken==tokens.NEW_LINE)
+        //{
+          //  currentToken=nextToken();
+            //if(currentToken==tokens.DEL_TAB)
+            //{
+              //  currentToken=nextToken();
+                //statement();
                 if(currentToken==tokens.DEL_DESTAB)
                 {
                     currentToken=nextToken();
                 }
-            }
-        }
+            //}
+        //}
     }
     
     public void range() throws IOException
