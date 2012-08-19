@@ -66,6 +66,11 @@ public class sintactico {
                 }
             }
         }
+        else
+        {
+            rutinaError();
+           
+        }
     }
     
     public void field_decl() throws IOException
@@ -87,8 +92,7 @@ public class sintactico {
             }
             else
             {
-                rutinaError(" una tabulacion");
-                System.exit(errores);
+                rutinaError();
             }
         }
     }
@@ -225,9 +229,11 @@ public class sintactico {
                 currentToken=nextToken();
                 if(currentToken==tokens.KW_IN)
                 {
+                    currentToken=nextToken();
                     range();
                     if(currentToken==tokens.SIGN_DP)
                     {
+                        currentToken=nextToken();
                         block();
                     }
                 }
@@ -467,8 +473,7 @@ public class sintactico {
             }
             else
             {
-                rutinaError("Se esperaba una tabulacion mas");
-                System.exit(0);
+                rutinaError();
             }
 
         }
@@ -580,9 +585,10 @@ public class sintactico {
         }
     }
     
-    public void rutinaError(String error)
+    public void rutinaError()
     {
         int linea=lex.getTotalEnters();
-        System.out.println("Error en la linea "+linea+ " se esperaba "+error);
+        System.out.println("Error en la linea "+linea);
+        System.exit(0);
     }
 }
