@@ -1,4 +1,5 @@
 class GreatestCommonDivisor:
+
 	a = 10
 	b = 20
 

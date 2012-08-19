@@ -28,7 +28,7 @@ public class lexico {
         this.path = path;
         position=0;
         estado=-1;
-        totalEnters=0;
+        totalEnters=1;
         totalTabs=0;
         file=new File(path);
         pila=new Stack();
@@ -76,6 +76,7 @@ public class lexico {
     }
     
     private String lasttoken;
+    public int topPila, actualTab;
     public tokenlist nextToken() throws IOException
     {
          String token="";
@@ -105,6 +106,8 @@ public class lexico {
                             int top=getTopPila();
                             if(contador>top)
                             {
+                                actualTab=contador;
+                                topPila=(int) pila.get(pila.size()-1);
                                 pila.push(contador);
                                 estado=-1;
                                 lasttoken="";
@@ -114,6 +117,8 @@ public class lexico {
                             {
                                 estado=-1;
                                 lasttoken="";
+                                actualTab=contador;
+                                topPila=(int) pila.get(pila.size()-1);
                                 return new tokenlist(token, tokens.DEL_TAB);
                             }
                             else
@@ -144,6 +149,8 @@ public class lexico {
                             int top=getTopPila();
                             if(contador>top)
                             {
+                                actualTab=contador;
+                                topPila=(int) pila.get(pila.size()-1);
                                 pila.push(contador);
                                 estado=-1;
                                 lasttoken="";
@@ -153,6 +160,8 @@ public class lexico {
                             {
                                 estado=-1;
                                 lasttoken="";
+                                 actualTab=contador;
+                                topPila=(int) pila.get(pila.size()-1);
                                 return new tokenlist(token, tokens.DEL_TAB);
                             }
                             else

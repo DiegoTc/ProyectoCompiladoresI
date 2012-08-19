@@ -14,13 +14,13 @@ import  minipython.lexico.tokenlist;
  * @author diego
  */
 public class sintactico {
-    public lexico parse;
+    public lexico lex;
     public int errores;
     public sintactico(String path) {
-        parse=new lexico(path);
+        lex=new lexico(path);
         errores=0;
         try {
-            parse.cs=parse.nextSymbol();
+            lex.cs=lex.nextSymbol();
         } catch (IOException ex) {
             Logger.getLogger(sintactico.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -31,7 +31,7 @@ public class sintactico {
     public tokenlist tk;
     boolean flag;
     public tokens nextToken() throws IOException{
-        tk=parse.nextToken();
+        tk=lex.nextToken();
         currentToken=tk.getTipo();
         return currentToken;
     }
@@ -73,6 +73,10 @@ public class sintactico {
         if(currentToken==tokens.NEW_LINE)
         {
             currentToken=nextToken();
+            while(currentToken==tokens.NEW_LINE )
+            {
+                currentToken=nextToken();
+            }
             if(currentToken==tokens.DEL_TAB)
             {
                 currentToken=nextToken();
@@ -80,6 +84,11 @@ public class sintactico {
                 {
                     assign();
                 }
+            }
+            else
+            {
+                rutinaError(" una tabulacion");
+                System.exit(errores);
             }
         }
     }
@@ -328,12 +337,7 @@ public class sintactico {
         }
         if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
            currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
-           currentToken==tokens.SIGN_CORI||currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
-           currentToken==tokens.OP_DIV||currentToken==tokens.OP_MAIG||currentToken==tokens.OP_MAYOR||
-           currentToken==tokens.OP_MEIG||currentToken==tokens.OP_MENOR||currentToken==tokens.OP_MOD||
-           currentToken==tokens.OP_MULT||currentToken==tokens.OP_NOT||currentToken==tokens.OP_NUM||
-           currentToken==tokens.OP_OR||currentToken==tokens.OP_REST||currentToken==tokens.OP_SLEFT||
-           currentToken==tokens.OP_SRIGHT||currentToken==tokens.OP_SUMA)
+           currentToken==tokens.SIGN_CORI)
         {
             exprTermino();
             if(currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
@@ -345,6 +349,11 @@ public class sintactico {
             {
                 Termino();
             }
+        }
+        else
+        {
+            System.out.println("No se esperaba dicho simbolo"+ currentToken);
+            System.exit(errores);
         }
     }
     
@@ -452,7 +461,16 @@ public class sintactico {
     {
         if(currentToken==tokens.DEL_TAB)
         {
-            currentToken=nextToken();
+            if(lex.actualTab>lex.topPila)
+            {
+                currentToken=nextToken();
+            }
+            else
+            {
+                rutinaError("Se esperaba una tabulacion mas");
+                System.exit(0);
+            }
+
         }
     }
     
@@ -560,5 +578,11 @@ public class sintactico {
         {
             currentToken=nextToken();
         }
+    }
+    
+    public void rutinaError(String error)
+    {
+        int linea=lex.getTotalEnters();
+        System.out.println("Error en la linea "+linea+ " se esperaba "+error);
     }
 }
