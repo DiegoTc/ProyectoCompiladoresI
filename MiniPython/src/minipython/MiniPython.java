@@ -3,9 +3,8 @@
  * and open the template in the editor.
  */
 package minipython;
-import com.sun.xml.internal.ws.api.pipe.NextAction;
 import java.io.IOException;
-import minipython.lexico.*;
+import minipython.lexico.tokenlist;
 import sintactico.sintactico;
 /**
  *
@@ -15,11 +14,12 @@ public class MiniPython {
 
     /**
      * @param args the command line arguments
+     * @throws IOException  
      */
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
         
-        String path = "";
+        String path;
         if (args.length != 1) 
         {
             System.out.println("usage: java -jar MiniPython.jar <archivo de entrada>");
