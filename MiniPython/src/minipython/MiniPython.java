@@ -30,7 +30,7 @@ public class MiniPython {
         
         
         //String path="/home/diego/UNITEC/2012/III_Periodo/Compiladores_I/Proyecto/Proyecto_CompiladoresI/ProyectoCompiladoresI/MiniPython/sample1.py";
-        /*lexico lex=new lexico(path);
+      /*  lexico lex=new lexico(path);
         lex.cs=lex.nextSymbol();
         tokenlist token=lex.nextToken();
         while(token.getTipo()!=tokenlist.tokens.EOF)

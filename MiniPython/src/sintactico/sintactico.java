@@ -128,8 +128,8 @@ public class sintactico {
                 if(currentToken==tokens.SIGN_DP)
                 {
                     currentToken=nextToken();
+                    block();
                 }
-                block();
             }
         }
     }
@@ -142,11 +142,11 @@ public class sintactico {
             inicioBloque();
             //statement();
             if(currentToken==tokens.P_ID||currentToken==tokens.KW_PRINT||currentToken==tokens.KW_IF||currentToken==tokens.KW_WHILE||
-               currentToken==tokens.KW_FOR||currentToken==tokens.KW_RETURN||currentToken==tokens.KW_BREAK)
+               currentToken==tokens.KW_FOR||currentToken==tokens.KW_RETURN||currentToken==tokens.KW_BREAK||currentToken==tokens.KW_READ)
             {
                 statement();
                 while(currentToken==tokens.P_ID||currentToken==tokens.KW_PRINT||currentToken==tokens.KW_IF||currentToken==tokens.KW_WHILE||
-               currentToken==tokens.KW_FOR||currentToken==tokens.KW_RETURN||currentToken==tokens.KW_BREAK)
+               currentToken==tokens.KW_FOR||currentToken==tokens.KW_RETURN||currentToken==tokens.KW_BREAK||currentToken==tokens.KW_READ)
                 {
                     statement();
                     while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
@@ -217,6 +217,7 @@ public class sintactico {
             expr();
             if(currentToken==tokens.SIGN_DP)
             {
+                currentToken=nextToken();
                 block();
             }
         }
@@ -343,7 +344,7 @@ public class sintactico {
         }
         if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
            currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
-           currentToken==tokens.SIGN_CORI)
+           currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
         {
             exprTermino();
             if(currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
@@ -375,7 +376,7 @@ public class sintactico {
             currentToken=nextToken();
             method_call();
         }
-        else if(currentToken==tokens.LIT_NUM)
+        else if(currentToken==tokens.LIT_NUM||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE||currentToken==tokens.LIT_CHCONST)
         {
             constant();
         }
@@ -391,6 +392,10 @@ public class sintactico {
             if(currentToken==tokens.SIGN_PARD)
             {
                 currentToken=nextToken();
+                while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
+                {
+                    currentToken=nextToken();
+                }
             }
         }
         else if(currentToken==tokens.SIGN_CORI)
@@ -405,6 +410,10 @@ public class sintactico {
             if(currentToken==tokens.SIGN_CORD)
             {
                 currentToken=nextToken();
+                while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
+                {
+                    currentToken=nextToken();
+                }
             }
         }
     }

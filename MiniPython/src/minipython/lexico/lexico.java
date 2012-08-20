@@ -28,7 +28,7 @@ public class lexico {
         this.path = path;
         position=0;
         estado=-1;
-        totalEnters=1;
+        totalEnters=0;
         totalTabs=0;
         file=new File(path);
         pila=new Stack();
@@ -182,6 +182,15 @@ public class lexico {
                                 return new tokenlist(token, tokens.DEL_DESTAB);
                             }
                         }
+                        
+                    }
+                    if(cs=='\t')
+                    {
+                        totalTabs++;
+                        token+=cs;
+                        cs=nextSymbol();
+                        estado=-1;
+                        return new tokenlist(token, tokens.DEL_TAB);
                         
                     }
                     if(cs==' '||Character.isWhitespace(cs)||Character.isSpaceChar(cs))
