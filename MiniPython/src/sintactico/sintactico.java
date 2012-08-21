@@ -170,7 +170,7 @@ public class sintactico {
             currentToken=nextToken();
             if(currentToken==tokens.SIGN_PARI)
             {
-                currentToken=nextToken();
+                //currentToken=nextToken();
                 method_call();
             }
             else
@@ -265,32 +265,43 @@ public class sintactico {
     
     public void method_call() throws IOException
     {
-        if(currentToken==tokens.P_ID)
-        {
-            currentToken=nextToken();
             if(currentToken==tokens.SIGN_PARI)
             {
                 currentToken=nextToken();
-                expr();
-                boolean flags=true;
-                while(flags)
-                {
-                    if(currentToken==tokens.SIGN_C)
+                if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
+                   currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
+                   currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
+                {    
+                    expr();
+                    boolean flags=true;
+                    while(flags)
                     {
-                        currentToken=nextToken();
-                        expr();
-                    }
-                    else
-                    {
-                        flags=false;
+                        if(currentToken==tokens.SIGN_C)
+                        {
+                            currentToken=nextToken();
+                            if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
+                                currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
+                                currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
+                            {
+                                expr();
+                            }
+                        }
+                        else
+                        {
+                            flags=false;
+                        }
                     }
                 }
                 if(currentToken==tokens.SIGN_PARD)
                 {
                     currentToken=nextToken();
                 }
+                while(currentToken==tokens.DEL_TAB||currentToken==tokens.NEW_LINE)
+                {
+                    currentToken=nextToken();
+                }
             }
-        }
+        
         else if(currentToken==tokens.KW_PRINT)
         {
             currentToken=nextToken();
@@ -317,6 +328,10 @@ public class sintactico {
         {
             currentToken=nextToken();
             lvalue();
+            while(currentToken==tokens.DEL_TAB||currentToken==tokens.NEW_LINE)
+            {
+                currentToken=nextToken();
+            }
         }
     }
     public void lvalue() throws IOException
@@ -391,7 +406,10 @@ public class sintactico {
         else if(currentToken==tokens.SIGN_PARI)
         {
             currentToken=nextToken();
-            expr();
+            if(currentToken!=tokens.SIGN_PARD)
+            {
+                expr();
+            }
             if(currentToken==tokens.SIGN_PARD)
             {
                 currentToken=nextToken();
@@ -438,7 +456,11 @@ public class sintactico {
         else if(currentToken==tokens.SIGN_PARI)
         {
             currentToken=nextToken();
-            expr();
+            if(currentToken!=tokens.SIGN_PARD)
+            {
+                expr();
+            }
+            //expr();
             boolean flags=true;
             while(flags)
             {
@@ -451,7 +473,7 @@ public class sintactico {
                 {
                     flags=false;
                  }
-              }
+             }
               if(currentToken==tokens.SIGN_PARD)
               {
                   currentToken=nextToken();
@@ -514,16 +536,21 @@ public class sintactico {
     
     public void range() throws IOException
     {
-        if(currentToken==tokens.LIT_NUM)
+        if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
+           currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
+           currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
         {
-            currentToken=nextToken();
+            expr();
             if(currentToken==tokens.SIGN_RANG)
             {
                 currentToken=nextToken();
-                if(currentToken==tokens.LIT_NUM)
-                {
-                    currentToken=nextToken();
-                }
+                 if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
+                    currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
+                    currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
+                 {
+                     expr();
+                 }
+                       
             }
         }
     }
