@@ -28,7 +28,7 @@ public class lexico {
         this.path = path;
         position=0;
         estado=-1;
-        totalEnters=0;
+        totalEnters=1;
         totalTabs=0;
         file=new File(path);
         pila=new Stack();
@@ -46,9 +46,16 @@ public class lexico {
 
     private int getTopPila()
     {
-        Object a=pila.lastElement();
-        int num=Integer.parseInt(a.toString());
-        return num;
+        if(pila.isEmpty()==true)
+        {
+            Object a=pila.lastElement();
+            int num=Integer.parseInt(a.toString());
+            return num;
+        }
+        else
+        {
+            return -1;
+        }
     }
     
     public int getTotalEnters() {
@@ -98,7 +105,7 @@ public class lexico {
                         int contador=0;
                         if(cs=='\t')
                         {
-                            while(cs=='\t')
+                            while(cs=='\t'||Character.isWhitespace(cs)||cs==' ')
                             {
                                 cs=nextSymbol();
                                 contador++;
@@ -141,7 +148,7 @@ public class lexico {
                         }
                         
                         if(Character.isWhitespace(cs)||cs==' '){
-                            while(Character.isWhitespace(cs)||cs==' ')
+                            while(Character.isWhitespace(cs)||cs==' '||cs=='\t')
                             {
                                 cs=nextSymbol();
                                 contador++;

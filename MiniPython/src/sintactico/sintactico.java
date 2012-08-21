@@ -308,6 +308,10 @@ public class sintactico {
                     flags=false;
                 }
             }
+            while(currentToken==tokens.DEL_TAB||currentToken==tokens.NEW_LINE)
+            {
+                currentToken=nextToken();
+            }
         }
         else if(currentToken==tokens.KW_READ)
         {
@@ -359,8 +363,7 @@ public class sintactico {
         }
         else
         {
-            System.out.println("No se esperaba dicho simbolo"+ currentToken);
-            System.exit(errores);
+            rutinaError();
         }
     }
     
@@ -466,8 +469,17 @@ public class sintactico {
            currentToken==tokens.OP_SRIGHT||currentToken==tokens.OP_SUMA)
         {
             currentToken=nextToken();
-            exprTermino();
-            Termino();
+            if(currentToken==tokens.P_ID||
+                currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
+                currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
+            {
+                exprTermino();
+                Termino();
+            }
+            else
+            {
+                rutinaError();
+            }
         }
     }
 
