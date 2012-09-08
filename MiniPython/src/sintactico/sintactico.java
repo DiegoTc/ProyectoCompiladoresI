@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import minipython.lexico.*;
 import minipython.lexico.tokenlist.tokens;
 import  minipython.lexico.tokenlist;
+import semantico.*;
 /**
  *
  * @author diego

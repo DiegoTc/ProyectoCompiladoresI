@@ -1,5 +1,8 @@
 class ciclos:
-
+	x=45+4
+	y=x+3
+	y=y+1
+	z=~6
 	def main: 
 		if (true):
 			if(false):
