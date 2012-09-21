@@ -15,16 +15,16 @@ import semantico.*;
  *
  * @author diego
  */
-public class sintactico {
+public class sintactico_AST {
     public lexico lex;
     public int errores;
-    public sintactico(String path) {
+    public sintactico_AST(String path) {
         lex=new lexico(path);
         errores=0;
         try {
             lex.cs=lex.nextSymbol();
         } catch (IOException ex) {
-            Logger.getLogger(sintactico.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(sintactico_AST.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -37,7 +37,7 @@ public class sintactico {
         currentToken=tk.getTipo();
         return currentToken;
     }
-    
+    /*
     public void start() throws IOException
     {
         while(currentToken!=tokens.EOF)
@@ -75,8 +75,11 @@ public class sintactico {
         }
     }
     
-    public void field_decl() throws IOException
+    public FieldDeclNode field_decl() throws IOException
     {
+        String varName="";
+        ASTNode right=null;
+        int Linea=lex.getTotalEnters();
         if(currentToken==tokens.NEW_LINE)
         {
             currentToken=nextToken();
@@ -89,7 +92,9 @@ public class sintactico {
                 currentToken=nextToken();
                 if(currentToken==tokens.P_ID)
                 {
-                    assign();
+                    varName=currentToken.toString();
+                    right=assign();
+                    return new FieldDeclNode(Linea, varName, right);
                 }
             }
             else
@@ -97,27 +102,35 @@ public class sintactico {
                 rutinaError();
             }
         }
+        return new FieldDeclNode(Linea, varName, right);
     }
     
-    public void method_decl() throws IOException
+    public MethodDeclNode method_decl() throws IOException
     {
+        String name=null;
+        ArrayList<String> methodArguments=null;
+        ASTNode block=null;
+        int linea=lex.getTotalEnters();
         if(currentToken==tokens.KW_DEF)
         {
             currentToken=nextToken();
             if(currentToken==tokens.P_ID)
             {
+                name=currentToken.toString();
                 currentToken=nextToken();
                 if(currentToken==tokens.SIGN_PARI)
                 {
                     currentToken=nextToken();
                     if(currentToken==tokens.P_ID)
                     {
+                        methodArguments.add(currentToken.toString());
                         currentToken=nextToken();
                         while(currentToken==tokens.SIGN_C)
                         {
                             currentToken=nextToken();
                             if(currentToken==tokens.P_ID)
                             {
+                                methodArguments.add(currentToken.toString());
                                 currentToken=nextToken();
                             }
                         }
@@ -130,27 +143,32 @@ public class sintactico {
                 if(currentToken==tokens.SIGN_DP)
                 {
                     currentToken=nextToken();
-                    block();
+                    block=block();
                 }
             }
         }
+        return new MethodDeclNode(name, methodArguments, block, linea);
     }
     
-    public void block() throws IOException
+    public BlockNode block() throws IOException
     {
-        if(currentToken==tokens.NEW_LINE)
-        {
+         ArrayList<ASTNode> statements=null;
+         int linea=0;
+         if(currentToken==tokens.NEW_LINE)
+         {
             currentToken=nextToken();
             inicioBloque();
             //statement();
             if(currentToken==tokens.P_ID||currentToken==tokens.KW_PRINT||currentToken==tokens.KW_IF||currentToken==tokens.KW_WHILE||
                currentToken==tokens.KW_FOR||currentToken==tokens.KW_RETURN||currentToken==tokens.KW_BREAK||currentToken==tokens.KW_READ)
             {
-                statement();
+                Statement s=statement();
+                statements.add(s);
                 while(currentToken==tokens.P_ID||currentToken==tokens.KW_PRINT||currentToken==tokens.KW_IF||currentToken==tokens.KW_WHILE||
                currentToken==tokens.KW_FOR||currentToken==tokens.KW_RETURN||currentToken==tokens.KW_BREAK||currentToken==tokens.KW_READ)
                 {
-                    statement();
+                    Statement state=statement();
+                    statements.add(state);
                     while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
                     {
                         currentToken=nextToken();
@@ -158,10 +176,12 @@ public class sintactico {
                 }
             }
             finBloque();
-        }
+         }
+         linea=lex.getTotalEnters();
+         return new BlockNode(statements, linea);
     }
     
-    public void statement() throws IOException
+    public Statement statement() throws IOException
     {
         while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
         {
@@ -173,33 +193,47 @@ public class sintactico {
             currentToken=nextToken();
             if(currentToken==tokens.SIGN_PARI)
             {
-                method_call();
+                //currentToken=nextToken();
+                MethodCallStatement methodSta=method_call(id);
+                return methodSta;
             }
             else
             {
-                assign();
+                AssignStatement assigSta=assign();
+                return assigSta;
             }
         }
         else if(currentToken==tokens.KW_PRINT||currentToken==tokens.KW_READ)
         {
-            method_call();
+            MethodCallStatement methodSta=method_call(currentToken.toString());
+            return methodSta;
         }
         else if(currentToken==tokens.KW_IF)
         {
+            ASTNode expr_=null;
+            ASTNode ifBlock=null;
+            ArrayList<ASTNode> elifBlockList=null;
+            BlockNode elseBlock=null;
+            int linea;
             currentToken=nextToken();
-            expr();
+            expr_=expr();
             if(currentToken==tokens.SIGN_DP)
             {
                 currentToken=nextToken();
-                block();
+                ifBlock=block();
                 while(currentToken==tokens.KW_ELIF)
                 {
+                    ASTNode ex;
+                    ASTNode block;
+                    int l=lex.getTotalEnters();
                     currentToken=nextToken();
-                    expr();
+                    ex=expr();
                     if(currentToken==tokens.SIGN_DP)
                     {
                         currentToken=nextToken();
-                        block();
+                        block=block();
+                        ElseIfBlock elifB=new ElseIfBlock(ex, block, l);
+                        elifBlockList.add(elifB);
                     }
                 }
                 if(currentToken==tokens.KW_ELSE)
@@ -208,24 +242,34 @@ public class sintactico {
                     if(currentToken==tokens.SIGN_DP)
                     {
                         currentToken=nextToken();
-                        block();
+                        elseBlock=block();
                     }
                 }
             }
+            return new IfStatement(expr_, ifBlock, elifBlockList, elseBlock, linea);
         }
         else if(currentToken==tokens.KW_WHILE)
         {
+            ASTNode ex=null;
+            ASTNode block=null;
+            int linea=lex.getTotalEnters();
             currentToken=nextToken();
-            expr();
+            ex=expr();
             if(currentToken==tokens.SIGN_DP)
             {
                 currentToken=nextToken();
-                block();
+                block=block();
             }
+            return new WhileStatement(ex, block, linea);
         }
         
         else if(currentToken==tokens.KW_FOR)
         {
+            String varName="";
+            ASTNode exprInicial=null;
+            ASTNode exprFinal=null;
+            ASTNode block=null;
+            int linea=-1;
             currentToken=nextToken();
             if(currentToken==tokens.P_ID)
             {
@@ -233,40 +277,57 @@ public class sintactico {
                 if(currentToken==tokens.KW_IN)
                 {
                     currentToken=nextToken();
-                    range();
+                    range(exprInicial, exprFinal);
                     if(currentToken==tokens.SIGN_DP)
                     {
                         currentToken=nextToken();
-                        block();
+                        block=block();
                     }
                 }
             }
+            return new ForStatement(varName, exprInicial, exprFinal, block, linea);
         }
         
         else if(currentToken==tokens.KW_RETURN)
         {
+            ASTNode expr;
+            int linea=lex.getTotalEnters();
             currentToken=nextToken();
-            expr();
+            expr=expr();
+            return new ReturnStatement(expr, linea);
         }
         
         else if(currentToken==tokens.KW_BREAK)
         {
+            int linea=lex.getTotalEnters();
             currentToken=nextToken();
+            return new BreakStatement(linea);
+        }
+        else
+        {
+            return new ErrorStatement(lex.getTotalEnters());
         }
     }
     
-    public void assign() throws IOException
+    public AssignStatement assign() throws IOException
     {
-        lvalue();
+        ASTNode leftNode=null, rightNode=null;
+        int linea=lex.getTotalEnters();
+        leftNode=lvalue();
         if(currentToken==tokens.SIGN_ASSIG)
         {
             currentToken=nextToken();
-            expr();
+            rightNode=expr();
+            //return new AssignStatement(leftNode, rightNode, linea);
         }
+        return new AssignStatement(leftNode, rightNode, linea);
     }
     
-    public void method_call() throws IOException
+     public MethodCallStatement method_call(String name) throws IOException
     {
+        String methodName=name;
+        ArrayList<ASTNode> methodParams = null;
+        int linea=lex.getTotalEnters();
         if(currentToken==tokens.SIGN_PARI)
         {
             currentToken=nextToken();
@@ -274,7 +335,7 @@ public class sintactico {
                currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
                    currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
             {
-                expr();
+                methodParams.add(expr());
                 boolean flags=true;
                 while(flags)
                 {
@@ -285,7 +346,7 @@ public class sintactico {
                            currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
                            currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
                         {
-                            expr();
+                            methodParams.add(expr());
                         }
                     }
                     else
@@ -311,14 +372,14 @@ public class sintactico {
         else if(currentToken==tokens.KW_PRINT)
         {
             currentToken=nextToken();
-            expr();  
+            methodParams.add(expr()); 
             boolean flags=true;
             while(flags)
             {
                 if(currentToken==tokens.SIGN_C)
                 {
                     currentToken=nextToken();
-                    expr();
+                    methodParams.add(expr());
                 }
                 else
                 {
@@ -333,37 +394,49 @@ public class sintactico {
         else if(currentToken==tokens.KW_READ)
         {
             currentToken=nextToken();
-            lvalue();
+            methodParams.add(expr());
             while(currentToken==tokens.DEL_TAB||currentToken==tokens.NEW_LINE)
             {
                 currentToken=nextToken();
             }
         }
-        
+        return new MethodCallStatement(methodName, methodParams, linea);
     }
-    
-    public void lvalue() throws IOException
+     
+    public SimpleLeftValue lvalue() throws IOException
     {
+        String varname=null;
+        int linea=0;
         if(currentToken==tokens.P_ID)
         {
             currentToken=nextToken();
-            lvalues();
+            if(currentToken==tokens.SIGN_CORI)
+            {
+                ASTNode expr=lvalues();
+                return new SimpleLeftValue(varname, expr, linea);
+            }
+            return new SimpleLeftValue(varname, linea);
         }
+        SimpleLeftValue s=null;
+        return s;
     }    
     
-    public void lvalues() throws IOException
+    public ASTNode lvalues() throws IOException
     {
+        ASTNode e=null;
         if(currentToken==tokens.SIGN_CORI)
         {
             currentToken=nextToken();
-            expr();
+            e=expr();
             if(currentToken ==tokens.SIGN_CORD) {
                 currentToken=nextToken();
+                return e;
             }
         }
+        return e;
     }
     
-    public void expr() throws IOException
+    public Expr expr() throws IOException
     {
         while(currentToken==tokens.NEW_LINE||currentToken==tokens.DEL_TAB)
         {
@@ -373,7 +446,7 @@ public class sintactico {
            currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
            currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
         {
-            exprTermino();
+            Expr e=exprTermino();
             if(currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
                currentToken==tokens.OP_DIV||currentToken==tokens.OP_MAIG||currentToken==tokens.OP_MAYOR||
                currentToken==tokens.OP_MEIG||currentToken==tokens.OP_MENOR||currentToken==tokens.OP_MOD||
@@ -390,22 +463,13 @@ public class sintactico {
         }
     }
     
-    public void exprTermino()throws IOException
+    public Expr exprTermino()throws IOException
     {
-         if(currentToken==tokens.P_ID)
+        
+        if(currentToken==tokens.LIT_NUM||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE||currentToken==tokens.LIT_CHCONST)
         {
-            currentToken=nextToken();
-            expresiones();
-        }
-        else if(currentToken==tokens.KW_PRINT||currentToken==tokens.KW_READ)
-        {
-            String id=currentToken.toString();
-            //currentToken=nextToken();
-            method_call();
-        }
-        else if(currentToken==tokens.LIT_NUM||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE||currentToken==tokens.LIT_CHCONST)
-        {
-            constant();
+            Expr e=constant();
+            return e;
         }
         else if(currentToken==tokens.SIGN_NEG)
         {
@@ -415,9 +479,7 @@ public class sintactico {
         else if(currentToken==tokens.SIGN_PARI)
         {
             currentToken=nextToken();
-             
-                expr();
-            
+            expr();   
             if(currentToken==tokens.SIGN_PARD)
             {
                 currentToken=nextToken();
@@ -429,12 +491,13 @@ public class sintactico {
         }
         else if(currentToken==tokens.SIGN_CORI)
         {
+            ArrayList<ASTNode> methodParams=null;
             currentToken=nextToken();
-            expr();
+            methodParams.add(expr());
             while(currentToken==tokens.SIGN_C)
             {
                 currentToken=nextToken();
-                expr();
+                methodParams.add(expr());
             }
             if(currentToken==tokens.SIGN_CORD)
             {
@@ -444,9 +507,10 @@ public class sintactico {
                     currentToken=nextToken();
                 }
             }
+            return new MethodCallExpTermino(lex.getTotalEnters(), methodParams);
         }
     }
-    
+    /*
     public void expresiones() throws IOException
     {
         while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
@@ -491,9 +555,9 @@ public class sintactico {
         {
             rutinaError();
         }
-    }
-    
-    public void Termino() throws IOException
+    }*/
+    /*
+    public void Termino(Expr e) throws IOException
     {
         if(currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
            currentToken==tokens.OP_DIV||currentToken==tokens.OP_MAIG||currentToken==tokens.OP_MAYOR||
@@ -502,13 +566,19 @@ public class sintactico {
            currentToken==tokens.OP_OR||currentToken==tokens.OP_REST||currentToken==tokens.OP_SLEFT||
            currentToken==tokens.OP_SRIGHT||currentToken==tokens.OP_SUMA)
         {
+            
+            
+            
+            
+            
+            
             currentToken=nextToken();
             if(currentToken==tokens.P_ID||
                 currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
                 currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
             {
                 exprTermino();
-                //Termino();
+                
             }
             else
             {
@@ -546,13 +616,13 @@ public class sintactico {
         }
     }
     
-    public void range() throws IOException
+    public void range(ASTNode e1, ASTNode e2) throws IOException
     {
         if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
            currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
            currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
         {
-            expr();
+            e1=expr();
             if(currentToken==tokens.SIGN_RANG)
             {
                 currentToken=nextToken();
@@ -560,7 +630,7 @@ public class sintactico {
                     currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
                     currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
                  {
-                     expr();
+                     e2=expr();
                  }
                        
             }
@@ -625,23 +695,50 @@ public class sintactico {
         }
     }
     
-    public void constant() throws IOException
+    public Expr constant() throws IOException
     {
-        if(currentToken==tokens.LIT_NUM||currentToken==tokens.LIT_CHCONST)
+        int linea=lex.getTotalEnters();
+        if(currentToken==tokens.LIT_NUM)
         {
+            NumberExprTermino num=new NumberExprTermino(Integer.parseInt(currentToken.toString()), linea);
             currentToken=nextToken();
+            return num;
         }
-        else if(currentToken==tokens.B_TRUE||currentToken==tokens.B_FALSE)
+        else if(currentToken==tokens.B_TRUE)
         {
-            bool_const();
+            Expr b=bool_const();
+            return b;
+        }
+        else if(currentToken==tokens.LIT_CHCONST)
+        {
+            StringConstantExprTermino string=new StringConstantExprTermino(linea, currentToken.toString());
+            currentToken=nextToken();
+            return string;
+        }
+        else
+        {
+            return new ErrorExpr(linea);
         }
     }
     
-    public void bool_const() throws IOException
+    public Expr bool_const() throws IOException
     {
-        if(currentToken==tokens.B_TRUE||currentToken==tokens.B_FALSE)
+        int linea=lex.getTotalEnters();
+        if(currentToken==tokens.B_TRUE)
         {
+            BoolExprTermino b=new BoolExprTermino(linea, true);
             currentToken=nextToken();
+            return b;
+        }
+        else if(currentToken==tokens.B_FALSE)
+        {
+            BoolExprTermino b=new BoolExprTermino(linea, false);
+            currentToken=nextToken();
+            return b;
+        }
+        else
+        {
+            return new ErrorExpr(linea);
         }
     }
     
@@ -650,5 +747,5 @@ public class sintactico {
         int linea=lex.getTotalEnters();
         System.out.println("Error en la linea "+linea);
         System.exit(0);
-    }
+    }*/
 }

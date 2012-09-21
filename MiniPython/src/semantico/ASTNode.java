@@ -8,7 +8,7 @@ package semantico;
  *
  * @author diego
  */
-abstract class ASTNode {
+public abstract class ASTNode {
     private  int linea;
     @Override
     public abstract String toString();

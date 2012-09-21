@@ -7,6 +7,7 @@ import java.io.IOException;
 import minipython.lexico.lexico;
 import minipython.lexico.tokenlist;
 import sintactico.sintactico;
+import sintactico.sintactico1;
 /**
  *
  * @author diego
@@ -40,7 +41,7 @@ public class MiniPython {
             token=lex.nextToken();
         }*/
         
-        sintactico sin=new sintactico(path);
+        sintactico1 sin=new sintactico1(path);
         sin.currentToken=sin.nextToken();
         while(sin.currentToken!=tokenlist.tokens.EOF)
         {

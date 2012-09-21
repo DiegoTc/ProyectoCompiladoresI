@@ -11,20 +11,21 @@ import minipython.lexico.*;
 import minipython.lexico.tokenlist.tokens;
 import  minipython.lexico.tokenlist;
 import semantico.*;
+import sun.org.mozilla.javascript.ast.AstNode;
 /**
  *
  * @author diego
  */
-public class sintactico {
+public class sintactico_AST {
     public lexico lex;
     public int errores;
-    public sintactico(String path) {
+    public sintactico_AST(String path) {
         lex=new lexico(path);
         errores=0;
         try {
             lex.cs=lex.nextSymbol();
         } catch (IOException ex) {
-            Logger.getLogger(sintactico.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(sintactico_AST.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -46,37 +47,51 @@ public class sintactico {
         }
     }
     
-    public void program() throws IOException
+    public ProgramNode program() throws IOException
     {
+        ProgramNode p = null;
+        String name=null;
+        ArrayList<FieldDeclNode> fielddecl_list = null;
+        ArrayList<MethodDeclNode> methodecl_list=null;
         if(currentToken==tokens.KW_CLASS)
         {
             currentToken=nextToken();
             if(currentToken==tokens.P_ID)
             {
+                name=currentToken.toString();
                 currentToken=nextToken();
                 if(currentToken==tokens.SIGN_DP)
                 {
                     currentToken=nextToken();
                     while(currentToken==tokens.NEW_LINE)
                     {
-                        field_decl();
+                        FieldDeclNode fiedecl=field_decl();
+                        fielddecl_list.add(fiedecl);
                     }
                     while(currentToken==tokens.KW_DEF)
                     {
-                        method_decl();
+                        MethodDeclNode method=method_decl();
+                        methodecl_list.add(method);
                     }
                 }
             }
+            int linea=lex.getTotalEnters();
+            p= new ProgramNode(linea, name, fielddecl_list, methodecl_list);
+            return p;
         }
         else
         {
             rutinaError();
+            return p;
            
         }
     }
     
-    public void field_decl() throws IOException
+    public FieldDeclNode field_decl() throws IOException
     {
+        String name=null;
+        AssignStatement right=null;
+        FieldDeclNode f=null;
         if(currentToken==tokens.NEW_LINE)
         {
             currentToken=nextToken();
@@ -89,35 +104,48 @@ public class sintactico {
                 currentToken=nextToken();
                 if(currentToken==tokens.P_ID)
                 {
-                    assign();
+                    name=currentToken.toString();
+                    right=assign();
                 }
+                int linea=lex.getTotalEnters();
+                f=new FieldDeclNode(linea, name, right);
+                return f;
             }
             else
             {
                 rutinaError();
+                return f;
             }
         }
+        return f;
     }
     
-    public void method_decl() throws IOException
+    public MethodDeclNode method_decl() throws IOException
     {
+        String name;
+        ArrayList<String> argumentos=null;
+        BlockNode bloque=null;
+        MethodDeclNode metodo=null;
         if(currentToken==tokens.KW_DEF)
         {
             currentToken=nextToken();
             if(currentToken==tokens.P_ID)
             {
+                name=currentToken.toString();
                 currentToken=nextToken();
                 if(currentToken==tokens.SIGN_PARI)
                 {
                     currentToken=nextToken();
                     if(currentToken==tokens.P_ID)
                     {
+                        argumentos.add(currentToken.toString());
                         currentToken=nextToken();
                         while(currentToken==tokens.SIGN_C)
                         {
                             currentToken=nextToken();
                             if(currentToken==tokens.P_ID)
                             {
+                                argumentos.add(currentToken.toString());
                                 currentToken=nextToken();
                             }
                         }
@@ -130,14 +158,19 @@ public class sintactico {
                 if(currentToken==tokens.SIGN_DP)
                 {
                     currentToken=nextToken();
-                    block();
+                    bloque=block();
                 }
+                int linea=lex.getTotalEnters();
+                return metodo=new MethodDeclNode(name, argumentos, bloque, linea);
             }
         }
+        return metodo;
     }
     
-    public void block() throws IOException
+    public BlockNode block() throws IOException
     {
+        ArrayList<Statement> state=null;
+        BlockNode bloque=null;
         if(currentToken==tokens.NEW_LINE)
         {
             currentToken=nextToken();
@@ -146,11 +179,11 @@ public class sintactico {
             if(currentToken==tokens.P_ID||currentToken==tokens.KW_PRINT||currentToken==tokens.KW_IF||currentToken==tokens.KW_WHILE||
                currentToken==tokens.KW_FOR||currentToken==tokens.KW_RETURN||currentToken==tokens.KW_BREAK||currentToken==tokens.KW_READ)
             {
-                statement();
+                state.add(statement());
                 while(currentToken==tokens.P_ID||currentToken==tokens.KW_PRINT||currentToken==tokens.KW_IF||currentToken==tokens.KW_WHILE||
                currentToken==tokens.KW_FOR||currentToken==tokens.KW_RETURN||currentToken==tokens.KW_BREAK||currentToken==tokens.KW_READ)
                 {
-                    statement();
+                    state.add(statement());
                     while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
                     {
                         currentToken=nextToken();
@@ -159,9 +192,10 @@ public class sintactico {
             }
             finBloque();
         }
+        return bloque;
     }
     
-    public void statement() throws IOException
+    public Statement statement() throws IOException
     {
         while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
         {
@@ -169,37 +203,52 @@ public class sintactico {
         }
         if(currentToken==tokens.P_ID)
         {
-            String id=currentToken.toString();
+            String n=currentToken.toString();
             currentToken=nextToken();
             if(currentToken==tokens.SIGN_PARI)
             {
-                method_call();
+                
+                MethodCallStatement callstatement=null;
+                ArrayList<ASTNode> parameters =method_call();
+                int linea=lex.getTotalEnters();
+                callstatement=new MethodCallStatement(n, parameters, linea);
+                return callstatement;
             }
             else
             {
-                assign();
+                AssignStatement assignState=null;
+                assignState=assign();
+                return assignState;
             }
         }
         else if(currentToken==tokens.KW_PRINT||currentToken==tokens.KW_READ)
         {
-            method_call();
+            MethodCallStatement callstatement=null;
+            ArrayList<ASTNode> parameters =method_call();
+            int l=lex.getTotalEnters();
+            callstatement=new MethodCallStatement(currentToken.toString(), parameters, l);
+            return callstatement;
         }
         else if(currentToken==tokens.KW_IF)
         {
             currentToken=nextToken();
-            expr();
+            Expr e=null;
+            e=expr();
             if(currentToken==tokens.SIGN_DP)
             {
                 currentToken=nextToken();
-                block();
+                BlockNode b=block();
+                BlockNode elseblock=null;
+                ArrayList<BlockNode> elifblocks=null;
+                ArrayList<Expr> elifexpressions = null;
                 while(currentToken==tokens.KW_ELIF)
                 {
                     currentToken=nextToken();
-                    expr();
+                    elifexpressions.add(expr());;
                     if(currentToken==tokens.SIGN_DP)
                     {
                         currentToken=nextToken();
-                        block();
+                        elifblocks.add(block());
                     }
                 }
                 if(currentToken==tokens.KW_ELSE)
@@ -208,117 +257,153 @@ public class sintactico {
                     if(currentToken==tokens.SIGN_DP)
                     {
                         currentToken=nextToken();
-                        block();
+                        elseblock=block();
                     }
                 }
+                int linea=lex.getTotalEnters();
+                IfStatement if_node=new IfStatement(e, b, elifexpressions, elifblocks, elseblock, linea);
+                return if_node;
             }
+            
         }
         else if(currentToken==tokens.KW_WHILE)
         {
             currentToken=nextToken();
-            expr();
+            Expr e=null;
+            BlockNode b=null;
+            e=expr();
             if(currentToken==tokens.SIGN_DP)
             {
                 currentToken=nextToken();
-                block();
+               
+                b=block();
             }
+            int linea=lex.getTotalEnters();
+            return new WhileStatement(e, b, linea);
         }
         
         else if(currentToken==tokens.KW_FOR)
         {
+            String varname;
+            Expr e1=null;
+            Expr e2=null;
+            BlockNode forblock=null;
             currentToken=nextToken();
             if(currentToken==tokens.P_ID)
             {
+                varname=currentToken.toString();
                 currentToken=nextToken();
                 if(currentToken==tokens.KW_IN)
                 {
                     currentToken=nextToken();
-                    range();
+                    range(e1,e2);
                     if(currentToken==tokens.SIGN_DP)
                     {
                         currentToken=nextToken();
-                        block();
+                        forblock=block();
                     }
                 }
+                int linea=lex.getTotalEnters();
+                return new ForStatement(varname, e2, e2, forblock, linea);
             }
         }
         
         else if(currentToken==tokens.KW_RETURN)
         {
             currentToken=nextToken();
-            expr();
+            Expr e=expr();
+            int linea=lex.getTotalEnters();
+            return new ReturnStatement(e, linea);
         }
         
         else if(currentToken==tokens.KW_BREAK)
         {
             currentToken=nextToken();
+            int linea=lex.getTotalEnters();
+            return new BreakStatement(linea);
         }
+        else
+        {
+           int linea=lex.getTotalEnters();
+            return new ErrorStatement(linea);
+        }
+        int linea=lex.getTotalEnters();
+        return new ErrorStatement(linea);
     }
     
-    public void assign() throws IOException
+    public AssignStatement assign() throws IOException
     {
-        lvalue();
+        ASTNode leftvalue=null;
+        leftvalue=lvalue();
+        Expr e=null;
+        AssignStatement assig=null;
         if(currentToken==tokens.SIGN_ASSIG)
         {
             currentToken=nextToken();
-            expr();
+            e=expr();
+            int linea=lex.getTotalEnters();
+            assig=new AssignStatement(leftvalue, e, linea);
         }
+        return assig;
     }
     
-    public void method_call() throws IOException
+    public ArrayList<ASTNode> method_call() throws IOException
     {
-        if(currentToken==tokens.SIGN_PARI)
-        {
-            currentToken=nextToken();
-            if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
-               currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
-                   currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
-            {
-                expr();
-                boolean flags=true;
-                while(flags)
-                {
-                    if(currentToken==tokens.SIGN_C)
-                    {
-                        currentToken=nextToken();
-                        if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
-                           currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
-                           currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
-                        {
-                            expr();
-                        }
-                    }
-                    else
-                    {
-                        flags=false;
-                    }
-                }
-            }
-            if(currentToken==tokens.SIGN_PARD)
+        ArrayList<ASTNode> lista=null;
+           
+            if(currentToken==tokens.SIGN_PARI)
             {
                 currentToken=nextToken();
+                if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
+                   currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
+                   currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
+                {    
+                    Expr e1=expr();
+                    lista.add(e1);
+                    boolean flags=true;
+                    while(flags)
+                    {
+                        if(currentToken==tokens.SIGN_C)
+                        {
+                            currentToken=nextToken();
+                            if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
+                                currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
+                                currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
+                            {
+                                Expr e2=expr();
+                                lista.add(e2);
+                            }
+                        }
+                        else
+                        {
+                            flags=false;
+                        }
+                    }
+                }
+                if(currentToken==tokens.SIGN_PARD)
+                {
+                    currentToken=nextToken();
+                }
                 while(currentToken==tokens.DEL_TAB||currentToken==tokens.NEW_LINE)
                 {
                     currentToken=nextToken();
                 }
+                return lista;
             }
-            else
-            {
-                rutinaError();
-            }
-        }
         
         else if(currentToken==tokens.KW_PRINT)
         {
             currentToken=nextToken();
-            expr();  
+            Expr e1=expr();
+            lista.add(e1);  
             boolean flags=true;
             while(flags)
             {
                 if(currentToken==tokens.SIGN_C)
                 {
                     currentToken=nextToken();
-                    expr();
+                    Expr e2=expr();
+                    lista.add(e2);
                 }
                 else
                 {
@@ -329,41 +414,59 @@ public class sintactico {
             {
                 currentToken=nextToken();
             }
+            return lista;
         }
         else if(currentToken==tokens.KW_READ)
         {
             currentToken=nextToken();
-            lvalue();
+            lista.add(lvalue());
             while(currentToken==tokens.DEL_TAB||currentToken==tokens.NEW_LINE)
             {
                 currentToken=nextToken();
             }
+            return lista;
         }
-        
     }
-    
-    public void lvalue() throws IOException
+    public ASTNode lvalue() throws IOException
     {
+        String name=null;
+        ASTNode val=null;
+        int linea = 0;
         if(currentToken==tokens.P_ID)
         {
+            name=currentToken.toString();
             currentToken=nextToken();
-            lvalues();
+            val=lvalues();
+            linea=lex.getTotalEnters();
+            if(val==null)
+            {
+                return new SimpleLeftValue(name, linea);
+            }
+            else
+            {
+                return new ArrayIndexLeftValue(name, val, linea);
+            }
         }
+        return new ErrorStatement(linea);
     }    
     
-    public void lvalues() throws IOException
+    public ASTNode lvalues() throws IOException
     {
+        ASTNode node=null;
         if(currentToken==tokens.SIGN_CORI)
         {
             currentToken=nextToken();
-            expr();
+            node=expr();
             if(currentToken ==tokens.SIGN_CORD) {
                 currentToken=nextToken();
+                return node;
             }
+            return node=null;
         }
+        return node;
     }
     
-    public void expr() throws IOException
+    public Expr expr() throws IOException
     {
         while(currentToken==tokens.NEW_LINE||currentToken==tokens.DEL_TAB)
         {
@@ -373,7 +476,7 @@ public class sintactico {
            currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
            currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
         {
-            exprTermino();
+            LeftValueExpr e1=exprTermino();
             if(currentToken==tokens.OP_AND||currentToken==tokens.OP_COMP||currentToken==tokens.OP_DIST||
                currentToken==tokens.OP_DIV||currentToken==tokens.OP_MAIG||currentToken==tokens.OP_MAYOR||
                currentToken==tokens.OP_MEIG||currentToken==tokens.OP_MENOR||currentToken==tokens.OP_MOD||
@@ -390,17 +493,16 @@ public class sintactico {
         }
     }
     
-    public void exprTermino()throws IOException
+    public Expr exprTermino()throws IOException
     {
-         if(currentToken==tokens.P_ID)
+        if(currentToken==tokens.P_ID)
         {
             currentToken=nextToken();
             expresiones();
         }
         else if(currentToken==tokens.KW_PRINT||currentToken==tokens.KW_READ)
         {
-            String id=currentToken.toString();
-            //currentToken=nextToken();
+            currentToken=nextToken();
             method_call();
         }
         else if(currentToken==tokens.LIT_NUM||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE||currentToken==tokens.LIT_CHCONST)
@@ -415,9 +517,10 @@ public class sintactico {
         else if(currentToken==tokens.SIGN_PARI)
         {
             currentToken=nextToken();
-             
+            if(currentToken!=tokens.SIGN_PARD)
+            {
                 expr();
-            
+            }
             if(currentToken==tokens.SIGN_PARD)
             {
                 currentToken=nextToken();
@@ -487,10 +590,6 @@ public class sintactico {
                   currentToken=nextToken();
               }
          }
-        else
-        {
-            rutinaError();
-        }
     }
     
     public void Termino() throws IOException
@@ -508,7 +607,7 @@ public class sintactico {
                 currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
             {
                 exprTermino();
-                //Termino();
+                Termino();
             }
             else
             {
@@ -546,13 +645,13 @@ public class sintactico {
         }
     }
     
-    public void range() throws IOException
+    public void range(Expr e1, Expr e2) throws IOException
     {
         if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
            currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
            currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
         {
-            expr();
+            e1=expr();
             if(currentToken==tokens.SIGN_RANG)
             {
                 currentToken=nextToken();
@@ -560,7 +659,7 @@ public class sintactico {
                     currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
                     currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
                  {
-                     expr();
+                     e2=expr();
                  }
                        
             }
@@ -625,24 +724,50 @@ public class sintactico {
         }
     }
     
-    public void constant() throws IOException
+    public Expr constant() throws IOException
     {
-        if(currentToken==tokens.LIT_NUM||currentToken==tokens.LIT_CHCONST)
+        int linea=0;
+        if(currentToken==tokens.LIT_NUM)
         {
+            linea=lex.getTotalEnters();
+            int a= Integer.parseInt(currentToken.toString());
             currentToken=nextToken();
+            NumberExprTermino num=new NumberExprTermino(a, linea);
+            
+        }
+        else if(currentToken==tokens.LIT_CHCONST)
+        {
+            linea=lex.getTotalEnters();
+            String a=currentToken.toString();
+            currentToken=nextToken();
+            return new StringConstantExprTermino(linea, a);
+            
         }
         else if(currentToken==tokens.B_TRUE||currentToken==tokens.B_FALSE)
         {
-            bool_const();
+            BoolExprTermino b=bool_const();
+            return b;
         }
+        return new ErrorExpr(linea);
     }
     
-    public void bool_const() throws IOException
+    public BoolExprTermino bool_const() throws IOException
     {
-        if(currentToken==tokens.B_TRUE||currentToken==tokens.B_FALSE)
+        BoolExprTermino b=null;
+        int linea=0;
+        if(currentToken==tokens.B_TRUE)
         {
+            linea=lex.getTotalEnters();
             currentToken=nextToken();
+            return b=new BoolExprTermino(linea, true);
         }
+        else if(currentToken==tokens.B_FALSE)
+        {
+            linea=lex.getTotalEnters();
+            currentToken=nextToken();
+            return b=new BoolExprTermino(linea, false);
+        }
+        return b;
     }
     
     public void rutinaError()

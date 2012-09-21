@@ -8,6 +8,6 @@ package semantico;
  *
  * @author diego
  */
-abstract class LeftValue extends ASTNode{
+public abstract class LeftValue extends ASTNode{
     
 }

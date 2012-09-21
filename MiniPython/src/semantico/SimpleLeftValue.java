@@ -11,10 +11,19 @@ package semantico;
 public class SimpleLeftValue extends LeftValue{
     String varname;
     int linea;
-
+    
+    ASTNode expr;
+    
     public SimpleLeftValue(String varname, int linea) {
         this.varname = varname;
         this.linea = linea;
+    }
+    
+    public SimpleLeftValue(String varname, ASTNode expr, int linea)
+    {
+        this.varname=varname;
+        this.expr=expr;
+        this.linea=linea;
     }
 
     @Override

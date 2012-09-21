@@ -15,16 +15,16 @@ import semantico.*;
  *
  * @author diego
  */
-public class sintactico {
+public class sintactico1 {
     public lexico lex;
     public int errores;
-    public sintactico(String path) {
+    public sintactico1(String path) {
         lex=new lexico(path);
         errores=0;
         try {
             lex.cs=lex.nextSymbol();
         } catch (IOException ex) {
-            Logger.getLogger(sintactico.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(sintactico1.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -369,6 +369,247 @@ public class sintactico {
         {
             currentToken=nextToken();
         }
+        if(currentToken==tokens.OP_REST)
+        {
+            expr();
+        }
+        else if(currentToken==tokens.SIGN_NEG)
+        {
+            expr();
+        }
+        else if(currentToken==tokens.SIGN_CORI)
+        {
+            currentToken=nextToken();
+            expr();
+            if(currentToken==tokens.SIGN_C)
+            {
+                while(currentToken==tokens.SIGN_C)
+                {
+                    currentToken=nextToken();
+                    expr();
+                }
+            }
+            if(currentToken==tokens.SIGN_CORD)
+            {
+                currentToken=nextToken();
+            }
+            else
+            {
+                rutinaError();
+            }
+        }
+        else if(currentToken==tokens.SIGN_PARI)
+        {
+            currentToken=nextToken();
+            expr();
+            if(currentToken==tokens.SIGN_C)
+            {
+                while(currentToken==tokens.SIGN_C)
+                {
+                    currentToken=nextToken();
+                    expr();
+                }
+            }
+            if(currentToken==tokens.SIGN_PARD)
+            {
+                currentToken=nextToken();
+            }
+            else
+            {
+                rutinaError();
+            }
+        }
+        else if(currentToken==tokens.P_ID||currentToken==tokens.LIT_NUM
+                ||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
+        {
+            currentToken=nextToken();
+            relacion();
+        }
+        else
+        {
+            rutinaError();
+        }
+    }
+    
+    public void relacion() throws  IOException
+    {
+        if(currentToken==tokens.OP_DIST)
+        {
+            while(currentToken==tokens.OP_DIST)
+            {
+                currentToken=nextToken();
+                Arimetica();
+            }
+        }
+        else if(currentToken==tokens.OP_MEIG)
+        {
+           while(currentToken==tokens.OP_MEIG)
+            {
+                currentToken=nextToken();
+                Arimetica();
+            }
+        }
+        else if(currentToken==tokens.OP_MAIG)
+        {
+            while(currentToken==tokens.OP_MAIG)
+            {
+                currentToken=nextToken();
+                Arimetica();
+            }   
+        }
+        else if (currentToken==tokens.OP_COMP)
+        {
+            while(currentToken==tokens.OP_COMP)
+            {
+                currentToken=nextToken();
+                Arimetica();
+            }   
+        }
+        else if (currentToken==tokens.OP_MENOR)
+        {
+            while(currentToken==tokens.OP_MENOR)
+            {
+                currentToken=nextToken();
+                Arimetica();
+            }   
+        }
+        else if (currentToken==tokens.OP_MAYOR)
+        {
+            while(currentToken==tokens.OP_MAYOR)
+            {
+                currentToken=nextToken();
+                Arimetica();
+            }   
+        }
+        else
+        {
+            Arimetica();
+        }
+        
+    }
+    
+    public void Arimetica() throws IOException
+    {
+        if(currentToken==tokens.OP_SUMA)
+        {
+            while(currentToken==tokens.OP_SUMA)
+            {
+                currentToken=nextToken();
+                Produccion();
+            }   
+        }
+        else if(currentToken==tokens.OP_REST)
+        {
+            while(currentToken==tokens.OP_REST)
+            {
+                currentToken=nextToken();
+                Produccion();
+            }   
+        }
+        else if(currentToken==tokens.OP_OR)
+        {
+            while(currentToken==tokens.OP_OR)
+            {
+                currentToken=nextToken();
+                Produccion();
+            }  
+        }
+        else
+        {
+            Produccion();
+        }
+    }
+    
+    public void Produccion() throws IOException
+    {
+        if(currentToken==tokens.OP_DIV)
+        {
+            while(currentToken==tokens.OP_DIV)
+            {
+                currentToken=nextToken();
+                Shift();
+            }
+        }
+        else if(currentToken==tokens.OP_MULT)
+        {
+            while(currentToken==tokens.OP_MULT)
+            {
+                currentToken=nextToken();
+                Shift();
+            }
+        }
+        else if(currentToken==tokens.OP_MOD)
+        {
+            while(currentToken==tokens.OP_MOD)
+            {
+                currentToken=nextToken();
+                Shift();
+            }
+        }
+        else if(currentToken==tokens.OP_AND)
+        {
+            while(currentToken==tokens.OP_AND)
+            {
+                currentToken=nextToken();
+                Shift();
+            }
+        }
+        else
+        {
+            Shift();
+        }
+    }
+    
+    public void Shift() throws IOException
+    {
+        if(currentToken==tokens.OP_SRIGHT)
+        {
+            while(currentToken==tokens.OP_SRIGHT)
+            {
+                currentToken=nextToken();
+                Term();
+            }
+        }
+        else if(currentToken==tokens.OP_SLEFT)
+        {
+            while(currentToken==tokens.OP_SLEFT)
+            {
+                currentToken=nextToken();
+                Term();
+            }
+        }
+        else 
+        {
+            Term();
+        }
+    }
+    
+    public void Term() throws IOException
+    {
+        if(currentToken==tokens.LIT_NUM||currentToken==tokens.LIT_CHCONST
+                ||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
+        {
+            constant();
+        }
+        else if(currentToken==tokens.P_ID)
+        {
+            currentToken=nextToken();
+        }
+        while(currentToken==tokens.DEL_TAB||currentToken==tokens.NEW_LINE)
+        {
+            currentToken=nextToken();
+        }
+        
+        
+        
+    }
+    /*
+    public void expr() throws IOException
+    {
+        while(currentToken==tokens.NEW_LINE||currentToken==tokens.DEL_TAB)
+        {
+            currentToken=nextToken();
+        }
         if(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.P_ID||
            currentToken==tokens.LIT_NUM||currentToken==tokens.SIGN_NEG||currentToken==tokens.SIGN_PARI||
            currentToken==tokens.SIGN_CORI||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
@@ -516,7 +757,7 @@ public class sintactico {
             }
         }
     }
-
+    */
     
     public void inicioBloque() throws IOException
     {

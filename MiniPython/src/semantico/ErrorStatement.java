@@ -1,4 +1,4 @@
-    /*
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -8,26 +8,22 @@ package semantico;
  *
  * @author diego
  */
-public class WhileStatement extends Statement{
-    ASTNode expr;
-    ASTNode block;
+public class ErrorStatement extends Statement{
+
     int linea;
 
-    public WhileStatement(ASTNode expr, ASTNode block, int linea) {
-        this.expr = expr;
-        this.block = block;
+    public ErrorStatement(int linea) {
         this.linea = linea;
     }
-
+    
     @Override
     public String toString() {
-        throw new UnsupportedOperationException("Not supported yet.");
+       return "Error en la linea"+linea;
     }
 
     @Override
     public int getlinea() {
         return linea;
     }
-    
     
 }

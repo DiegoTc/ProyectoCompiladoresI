@@ -8,6 +8,6 @@ package semantico;
  *
  * @author diego
  */
-abstract class Statement extends ASTNode{
+public abstract class Statement extends ASTNode{
     
 }

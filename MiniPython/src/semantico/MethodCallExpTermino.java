@@ -12,12 +12,12 @@ import java.util.ArrayList;
  */
 public class MethodCallExpTermino extends Expr{
     int linea;
-    String methodname;
+    //String methodname;
     ArrayList<ASTNode> methodParams;
 
-    public MethodCallExpTermino(int linea, String methodname, ArrayList<ASTNode> methodParams) {
+    public MethodCallExpTermino(int linea,  ArrayList<ASTNode> methodParams) {
         this.linea = linea;
-        this.methodname = methodname;
+        //this.methodname = methodname;
         this.methodParams = methodParams;
     }
 

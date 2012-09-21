@@ -14,16 +14,18 @@ public class IfStatement extends Statement{
     ASTNode expr;
     ASTNode ifBlock;
     ArrayList<ASTNode> elifBlockList;
-    ASTNode elseBlock;
+    BlockNode elseBlock;
     int linea;
 
-    public IfStatement(ASTNode expr, ASTNode ifBlock, ArrayList<ASTNode> elifBlockList, ASTNode elseBlock, int linea) {
+    public IfStatement(ASTNode expr, ASTNode ifBlock, ArrayList<ASTNode> elifBlockList, BlockNode elseBlock, int linea) {
         this.expr = expr;
         this.ifBlock = ifBlock;
         this.elifBlockList = elifBlockList;
         this.elseBlock = elseBlock;
         this.linea = linea;
     }
+
+    
     
     
     
