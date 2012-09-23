@@ -1,4 +1,4 @@
-	class ciclos:
+class ciclos:
 	def main: 
 		if (true):
 			y = y + x

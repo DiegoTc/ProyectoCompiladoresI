@@ -148,7 +148,7 @@ public class sintactico1 {
             {
                 statement();
                 while(currentToken==tokens.P_ID||currentToken==tokens.KW_PRINT||currentToken==tokens.KW_IF||currentToken==tokens.KW_WHILE||
-               currentToken==tokens.KW_FOR||currentToken==tokens.KW_RETURN||currentToken==tokens.KW_BREAK||currentToken==tokens.KW_READ)
+               currentToken==tokens.KW_FOR||currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB||currentToken==tokens.KW_RETURN||currentToken==tokens.KW_BREAK||currentToken==tokens.KW_READ)
                 {
                     statement();
                     while(currentToken==tokens.NEW_LINE ||currentToken==tokens.DEL_TAB)
@@ -423,7 +423,10 @@ public class sintactico1 {
                 ||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
         {
             currentToken=nextToken();
-            relacion();
+            if(currentToken!=tokens.NEW_LINE)
+            {
+                relacion();
+            }
         }
         else
         {
@@ -590,10 +593,33 @@ public class sintactico1 {
                 ||currentToken==tokens.B_FALSE||currentToken==tokens.B_TRUE)
         {
             constant();
+            relacion();
         }
         else if(currentToken==tokens.P_ID)
         {
             currentToken=nextToken();
+            relacion();
+        }
+         else if(currentToken==tokens.SIGN_PARI)
+        {
+            currentToken=nextToken();
+            expr();
+            if(currentToken==tokens.SIGN_C)
+            {
+                while(currentToken==tokens.SIGN_C)
+                {
+                    currentToken=nextToken();
+                    expr();
+                }
+            }
+            if(currentToken==tokens.SIGN_PARD)
+            {
+                currentToken=nextToken();
+            }
+            else
+            {
+                rutinaError();
+            }
         }
         while(currentToken==tokens.DEL_TAB||currentToken==tokens.NEW_LINE)
         {

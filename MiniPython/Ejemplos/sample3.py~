@@ -1,8 +1,9 @@
 class ciclos:
 	def main: 
+		while (5 > 76 and 76 == y):
 		for x in 1 ... 10:
 			if (true):
-				y = [y + x]
+				y = y + x
 				while (5 > 76 and 76 == y):
 					print y
 					read z

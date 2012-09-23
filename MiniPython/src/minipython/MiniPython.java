@@ -21,7 +21,7 @@ public class MiniPython {
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
         
-        String path;
+       /* String path;
         if (args.length != 1) 
         {
             System.out.println("usage: java -jar MiniPython.jar <archivo de entrada>");
@@ -29,7 +29,7 @@ public class MiniPython {
         }
         
         path=args[0];
-        
+        */
         
         //String path="/home/diego/UNITEC/2012/III_Periodo/Compiladores_I/Proyecto/Proyecto_CompiladoresI/ProyectoCompiladoresI/MiniPython/sample1.py";
        /*lexico lex=new lexico(path);
@@ -40,7 +40,7 @@ public class MiniPython {
             System.out.println(token.getTipo()+" contenido: "+token.toString());
             token=lex.nextToken();
         }*/
-        
+        String path="/home/diego/UNITEC/2012/III_Periodo/Compiladores_I/Proyecto/Proyecto_CompiladoresI/ProyectoCompiladoresI/MiniPython/Ejemplos/sample5.py";
         sintactico1 sin=new sintactico1(path);
         sin.currentToken=sin.nextToken();
         while(sin.currentToken!=tokenlist.tokens.EOF)
