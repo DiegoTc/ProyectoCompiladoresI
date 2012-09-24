@@ -40,7 +40,7 @@ public class MiniPython {
             System.out.println(token.getTipo()+" contenido: "+token.toString());
             token=lex.nextToken();
         }*/
-        String path="/home/diego/UNITEC/2012/III_Periodo/Compiladores_I/Proyecto/Proyecto_CompiladoresI/ProyectoCompiladoresI/MiniPython/Ejemplos/sample5.py";
+        String path="/home/diego/UNITEC/2012/III_Periodo/Compiladores_I/Proyecto/Proyecto_CompiladoresI/ProyectoCompiladoresI/MiniPython/Ejemplos/sample10.py";
         sintactico1 sin=new sintactico1(path);
         sin.currentToken=sin.nextToken();
         while(sin.currentToken!=tokenlist.tokens.EOF)
